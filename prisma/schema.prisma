@@ -11,18 +11,27 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String
+  id                Int           @id @default(autoincrement())
+  email             String        @unique
+  name              String
+  sentMessages      Message[]     @relation("messageSender")
+  recievedMessages  Message[]     @relation("messageRecipient")
+  groups            Group[]
 }
 
-model Entry {
-  entryID     Int      @id @default(autoincrement())
+model Message {
+  id          Int     @id @default(autoincrement())
   senderID    Int
   recipientID Int
   date        DateTime
   time        String
   content     String
-  sender      User     @relation("sender", fields: [senderID], references: [id])
-  recipient  User    @relation("recipient", fields: [recipientID], references: [id])
+  sender      User    @relation("messageSender", fields: [senderID], references: [id])
+  recipient   User    @relation("messageRecipient", fields: [recipientID], references: [id])
+}
+
+model Group {
+  id    Int           @id @default(autoincrement())
+  name  String
+  users User[]
 }
