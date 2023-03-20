@@ -15,3 +15,14 @@ model User {
   email   String   @unique
   name    String
 }
+
+model Entry {
+  entryID     Int      @id @default(autoincrement())
+  senderID    Int
+  recipientID Int
+  date        DateTime
+  time        String
+  content     String
+  sender      User     @relation("sender", fields: [senderID], references: [id])
+  recipient  User    @relation("recipient", fields: [recipientID], references: [id])
+}
