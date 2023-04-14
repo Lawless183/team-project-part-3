@@ -6,17 +6,18 @@
 
         </Script>
     </head>
-    <body class = "">
-        <div class = "bg-info px-4 py-1">
-            <h1> message subsystem </h1>
-        </div>
-        <div class="container-fluid p-0 bg-success">
-            <div class="row gx-0 px-3">
+    <body class = "h-100" style = "background-color: grey;">
+
+        <header class = "px-4 py-1 text-center" style = "background-color: grey;">
+            <h1 style = "color: white"> Message Subsystem </h1>
+        </header>
+        <div class="container-fluid flex p-0">
+            <div class="row gx-0">
+                <!-- chat selection-->
               <div class="col-3">
-
-
-                <div class="bg-danger">
+                <div class="bg-danger display: flex">
                     <div class="d-flex bd-highlight">
+                        <!-- group and direct buttons-->
                         <div class="flex-fill bd-highlight text-center">
                             <button class="btn border border-white btn-primary rounded-0 w-100">
                                 Direct
@@ -28,36 +29,36 @@
                             </button>
                         </div>
                       </div>
+                      <!-- list of chats-->
                       <div class = "text-center">
-                        <ol class="list-group list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <ol class="list-group list-group rounded-0">
+                            <li class="list-group-item d-flex justify-content-between align-items-start p-3">
                               <div class="ms-2 me-auto">
                                 <div class="fw-bold">Jim Moriarty</div>
                               </div>
                               <!-- <span class="badge bg-primary rounded-pill">0</span> -->
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <li class="list-group-item d-flex justify-content-between align-items-start p-3">
                               <div class="ms-2 me-auto">
                                 <div class="fw-bold">Sherlock Homes</div>
                               </div>
                               <span class="badge bg-primary rounded-pill">2</span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <li class="list-group-item d-flex justify-content-between align-items-start p-3">
                               <div class="ms-2 me-auto">
                                 <div class="fw-bold">John Watson</div>
                               </div>
                               <span class="badge bg-primary rounded-pill">14</span>
                             </li>
+                            <li class="list-group-item text-center p-0 ">
+                                    <button class="btn btn-success rounded-0 w-100">+ </button>
+                              </li>
                           </ol>
                       </div>
-                </div>
-            
-
+                    </div>
               </div>
+              <!-- chat -->
               <div class="col-9 bg-secondary">
-                <div class = "text-center">
-                    CHAT GOES HERE
-                </div>
               </div>
             </div>
         </div>
