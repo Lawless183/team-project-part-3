@@ -20,6 +20,11 @@
                 background-color: rgb(62, 0, 103);
                 border: white;
             }
+            .chatbox{
+                overflow-x: hidden !important;
+                overflow-y: auto;
+                background-color: white;
+            }
         </style>
     </head>
     
@@ -27,8 +32,8 @@
         <header class = "header px-4 py-1 text-center">
             <h1> Message Subsystem </h1>
         </header>
-        <div class="container-fluid flex-grow-1 d-flex ">
-            <div class="row flex-fill flex-column flex-sm-row g-0">
+        <div class="container-fluid d-flex flex-grow-1">
+            <div class="row flex-grow-1 flex-column flex-sm-row g-0">
                 <!-- chat selection-->
                 <div class="col-sm-3 sidebar flex-shrink-1">
                     <div class="">
@@ -74,11 +79,11 @@
                     </div>
                 </div>
                 <!-- chat -->
-                <div class="chatborder col-sm-9 flex-grow-1 d-flex px-2">
-                    <div class="chatbox overflow-scroll flex-fill p-3 bg-white rounded-2">
-                        <div class="rounded-pill bg-primary px-3 py-2 ms-5 my-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Volutpat blandit aliquam etiam erat velit scelerisque in</div>
-                        <div class="rounded-pill bg-secondary px-3 me-5 my-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Volutpat blandit aliquam etiam erat velit scelerisque in</div>
-                        
+                <div class="chatbox col-sm-9 d-flex flex-column p-3">
+                            <div class="bg-primary p-3 my-2">hi</div>
+                            <div class="bg-secondary p-3 my-2">hi</div>
+                            <div class="bg-secondary p-3 my-2"> SUP!</div>
+                        </div>
                     </div>
                 </div>
             </div>
