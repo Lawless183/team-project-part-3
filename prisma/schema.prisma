@@ -17,6 +17,7 @@ model User {
   sentMessages      Message[]     @relation("messageSender")
   recievedMessages  Message[]     @relation("messageRecipient")
   groups            Group[]
+  isManager         Boolean       @default(false)
 }
 
 model Message {
