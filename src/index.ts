@@ -1,6 +1,7 @@
 import express from 'express';
 import prisma from './prisma';
 import userRoutes from './routes/user';
+import analyseRoutes from './routes/analyse';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,6 +11,7 @@ const port = process.env.SERVER_PORT || 3000;
 const app = express();
 
 app.use('/user', userRoutes);
+app.use('/analyse', analyseRoutes);
 
 async function main() {
     app.listen(port, () => console.log(`Server running on port ${port}`));
