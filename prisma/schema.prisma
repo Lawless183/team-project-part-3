@@ -11,28 +11,61 @@ datasource db {
 }
 
 model User {
-  id                Int           @id @default(autoincrement())
-  email             String        @unique
-  name              String
-  sentMessages      Message[]     @relation("messageSender")
-  recievedMessages  Message[]     @relation("messageRecipient")
-  groups            Group[]
-  isManager         Boolean       @default(false)
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  name             String
+  sentMessages     Message[] @relation("messageSender")
+  recievedMessages Message[] @relation("messageRecipient")
+  groups           Group[]
+  isManager        Boolean   @default(false)
+  leadProjects     Project[]
 }
 
 model Message {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   senderID    Int
   recipientID Int
-  date        DateTime
-  time        String
+  dateTime    DateTime @default(now())
   content     String
-  sender      User    @relation("messageSender", fields: [senderID], references: [id])
-  recipient   User    @relation("messageRecipient", fields: [recipientID], references: [id])
+  sender      User     @relation("messageSender", fields: [senderID], references: [id])
+  recipient   User     @relation("messageRecipient", fields: [recipientID], references: [id])
 }
 
 model Group {
-  id    Int           @id @default(autoincrement())
+  id    Int    @id @default(autoincrement())
   name  String
   users User[]
+}
+
+model Project {
+  id           Int      @id @default(autoincrement())
+  name         String
+  teamLeaderID Int
+  teamLeader   User     @relation(fields: [teamLeaderID], references: [id])
+  deadline     DateTime
+  tasks        Task[]
+}
+
+model Task {
+  id          Int          @id @default(autoincrement())
+  description String
+  hours       Float
+  status      Status       @default(TODO)
+  projectID   Int
+  project     Project      @relation(fields: [projectID], references: [id])
+  deadline    DateTime
+  categoryID  Int
+  category    TaskCategory @relation(fields: [categoryID], references: [id])
+}
+
+model TaskCategory {
+  id       Int    @id @default(autoincrement())
+  category String
+  tasks    Task[]
+}
+
+enum Status {
+  COMPLETED
+  ONGOING
+  TODO
 }
