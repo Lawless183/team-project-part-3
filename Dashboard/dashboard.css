@@ -1,0 +1,14 @@
+h1{
+    color: white;
+    text-align: center;
+    background-color: rgb(62, 0, 103);
+}
+
+#cardrow{
+    height: 75vh;
+    width: 100vw;
+}
+
+#progressSuccess{
+    margin-bottom: 5px;
+}
