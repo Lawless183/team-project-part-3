@@ -19,6 +19,7 @@ model User {
   groups           Group[]
   isManager        Boolean   @default(false)
   leadProjects     Project[]
+  tasks            Task[]
 }
 
 model Message {
@@ -56,6 +57,8 @@ model Task {
   deadline    DateTime
   categoryID  Int
   category    TaskCategory @relation(fields: [categoryID], references: [id])
+  userID      Int
+  user        User         @relation(fields: [userID], references: [id])
 }
 
 model TaskCategory {
