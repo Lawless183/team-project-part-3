@@ -4,6 +4,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script>
+
+            const directContactsExample = [
+                {name: "Sherlock Homes", id: 01, numUndreadMessages: 10},
+                {name: "Jim Moriarty", id: 01, numUndreadMessages: 0},
+                {name: "Mycroft Holmes", id: 01, numUndreadMessages: 100}
+            ]
+
+
+
             $(document).ready(function(){
                 $(document).on('keypress',function(e) {
                 if(e.which == 13) {
@@ -48,17 +57,17 @@
             //load the lsit of direct messages
             function listDirectContacts(){
                 clearContacts();
-                contacts =  null; //ajax here plz
+                contacts =  directContactsExample
 
-                /*
+                
                 for(let i = 0; i < contacts.length; i++  ){
-                    listContact(contacts[i]);
+                    appendContact(contacts[i]);
                 }
-                */
-
+                
             }
             //append one contact to the side bar 
-            function listContact(contact){
+            function appendContact(contact){
+                console.log(contact);
                 let html = "<button class='list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3'>\
                             <div class='ms-2 me-auto'>\
                                 <div class='fw-bold'>" +
@@ -66,15 +75,15 @@
                                 "</div>\
                             </div>";
                             if (contact.numUndreadMessages != 0){
-                              html += "<span class='badge bg-primary rounded-pill'>0</span>"
+                              html += "<span class='badge bg-primary rounded-pill'>" + contact.numUndreadMessages + "</span>"
                             }
                 html += "</button>";
-                $("#contactList").append(html);
+                $("#contactsList").append(html);
             }
 
             //load the list of groups
             function listGroupContacts(){
-
+                clearContacts();
             }
 
 
