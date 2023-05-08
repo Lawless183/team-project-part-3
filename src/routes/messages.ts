@@ -12,13 +12,9 @@ router.get('/', async (req, res) => {
         { senderID: user },
         { recipientID: user }
       ]
-    },
-    select: {
-      dateTime: true,
-      content: true
     }
   });
-  res.json(user);
+  res.json(messages);
 });
 
 export default router;
