@@ -1,77 +1,47 @@
-// import { PrismaClient } from '@prisma/client'
+// import express from 'express';
+// import prisma from '../prisma';
 
-// const prisma = new PrismaClient()
+// const router = express.Router();
 
-// const user = 1 // this is for testing purposes 
+// const user = 1;
 
-// async function getMessages() {
-//   const messages = await prisma.message.findMany({
-//     where: {
-//       OR: [
-//         { senderID: user },
-//         { recipientID: user }
-//       ]
-//     },
-//     select: {
-//       dateTime: true,
-//       content: true
+// router.get('/', async (req, res) => {
+//   // const messages = await prisma.message.findMany({
+//   //   where: {
+//   //     OR: [
+//   //       { senderID: user },
+//   //       { recipientID: user }
+//   //     ]
+//   //   },
+//   //   select: {
+//   //     dateTime: true,
+//   //     content: true
+//   //   }
+//   // });
+//   // res.json(messages);
+//   const users = await prisma.user.findMany({
+//     include: {
+//         recievedMessages: true,
+//         sentMessages: true,
+//         groups: true
 //     }
 //   });
-//     return messages;
-// }
+//   res.json(users);
+// })
 
-// console.log(getMessages());
+// export default router;
 
-import express from 'express';
-import prisma from '../prisma';
+import { PrismaClient } from '@prisma/client';
 
-const router = express.Router();
+const prisma = new PrismaClient();
 
-const user = 1;
+async function getMessages() {
+  const messages = await prisma.message.findMany();
+  return messages;
+}
 
-router.get('/', async (req, res) => {
-  // const messages = await prisma.message.findMany({
-  //   where: {
-  //     OR: [
-  //       { senderID: user },
-  //       { recipientID: user }
-  //     ]
-  //   },
-  //   select: {
-  //     dateTime: true,
-  //     content: true
-  //   }
-  // });
-  // res.json(messages);
-  const users = await prisma.user.findMany({
-    include: {
-        recievedMessages: true,
-        sentMessages: true,
-        groups: true
-    }
-  });
-  res.json(users);
-})
-
-router.get('/:id', async (req, res) => {
-  const id = Number(req.params.id);
-  if (isNaN(id)) {
-      res.json(null);
-      return;
-  }
-  const user = await prisma.user.findFirst({
-      where: {
-          id: {
-              equals: id
-          }
-      },
-      include: {
-          recievedMessages: true,
-          sentMessages: true,
-          groups: true
-      }
-  });
-  res.json(user);
-});
-
-export default router;
+// Usage
+getMessages()
+  .then((messages) => console.log(messages))
+  .catch((error) => console.error(error))
+  .finally(() => prisma.$disconnect());
