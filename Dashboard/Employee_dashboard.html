@@ -52,8 +52,9 @@
                             
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4" id="graph-container">
                         <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+                        <canvas id="lineChart" style="width:100%;max-width:700px"></canvas>
 
                         <script>
 
@@ -77,7 +78,7 @@
 
                                 const body = document.createElement('h5');
                                 body.classList.add('card-body');
-                                body.innerText = data[i].deadline;
+                                body.innerText = "Deadline: " + data[i].deadline;
 
                                 const footer = document.createElement('button');
                                 footer.classList.add('card-footer');
@@ -131,6 +132,25 @@
                                 }]
                               }
                         });
+
+                        const xValues = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        const yValues = [7,8,8,9,9,9,1,2,4,4,5,6];
+
+                        new Chart("lineChart", {
+                            type: "line",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                    label: "Improvement Score (1-10)",
+                                    fill: false,
+                                    lineTension: 0.5,
+                                    backgroundColor: "rgba(0,0,255,1.0)",
+                                    borderColor: "rgba(0,0,255,0.1)",
+                                    data: yValues
+                                }]
+                            }
+                        });
+
                         </script>
                     </div>
                 </div>
