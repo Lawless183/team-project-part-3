@@ -34,9 +34,9 @@ model Message {
 }
 
 model Group {
-  id    Int    @id @default(autoincrement())
-  name  String
-  users User[]
+  id       Int    @id @default(autoincrement())
+  name     String
+  users    User[]
   messages Message[]
 }
 
