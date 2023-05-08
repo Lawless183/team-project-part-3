@@ -76,4 +76,62 @@ router.get('/projects/:userID', async (req, res) => {
     res.json(project);
 });
 
+router.get('/projectData/:projectID', async (req, res) => {
+
+    // Reject request if projectID is not a number
+    const projectID = Number(req.params.projectID);
+    if (isNaN(projectID)) {
+        res.json(null);
+        return;
+    }
+
+    const project = await prisma.project.findFirst({
+        where: {
+            id: projectID
+        },
+        include: {
+            tasks: true
+        }
+    });
+
+    // Reject request if project does not exist
+    if (project == null) {
+        res.json(null);
+        return;
+    }
+
+    const taskData = {
+        COMPLETED: 0,
+        TODO: 0,
+        ONGOING: 0,
+        TOTAL: 0
+    }
+
+    for (const i in project.tasks) {
+        const task = project.tasks[i];
+        taskData[task.status]++;
+        taskData.TOTAL++;
+    }
+
+    const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
+
+    const fullProject = {
+        ...project,
+        taskData,
+        daysToDeadline
+    }
+
+    res.json(fullProject);
+
+});
+
+function dateDiffInDays(a: Date, b: Date) {
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    // Discard the time and time-zone information.
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+  }
+
 export default router;
