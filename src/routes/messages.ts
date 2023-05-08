@@ -17,4 +17,23 @@ router.get('/', async (req, res) => {
   res.json(messages);
 });
 
+router.get('/', async (req, res) => {
+  const contacts = await prisma.user.findMany({
+    select: {
+      email: true
+    }
+  });
+  res.json(contacts);
+});
+
+
 export default router;
+
+// pull list of all contacts 
+// pull list of all message content for direct messages
+// pull list of all message content for group messages 
+// with contact names instead of sender/recipient
+// adjust database schema to allow for group messaging 
+  // add group id column to message column
+  // assign direct messages a null tag in this column 
+  // create relation to group table on id
