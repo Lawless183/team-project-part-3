@@ -53,4 +53,25 @@ router.get('/', async (req, res) => {
   res.json(users);
 })
 
+router.get('/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) {
+      res.json(null);
+      return;
+  }
+  const user = await prisma.user.findFirst({
+      where: {
+          id: {
+              equals: id
+          }
+      },
+      include: {
+          recievedMessages: true,
+          sentMessages: true,
+          groups: true
+      }
+  });
+  res.json(user);
+});
+
 export default router;
