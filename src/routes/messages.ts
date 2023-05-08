@@ -15,16 +15,19 @@ router.get('/', async (req, res) => {
     }
   });
   res.json(messages);
-});
 
-router.get('/', async (req, res) => {
   const contacts = await prisma.user.findMany({
     select: {
       email: true
     }
   });
   res.json(contacts);
+
 });
+
+// router.get('/', async (req, res) => {
+  
+// });
 
 
 export default router;
