@@ -48,7 +48,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-8">
-                        <div class="row">
+                        <div class="row" id="card-container">
                             <div class="col-md-4">
                                 <div class="card">
                                     <h5 class="card-header">
@@ -105,6 +105,40 @@
                             const response = await fetch("http://localhost:3000/analyse/projects/1");
                             const data = await response.json();
                             console.log(data);
+
+                            const cardContainer = document.getElementById('card-container');
+
+                            for (const i in data) {
+                                const cardWrap = document.createElement('div');
+                                cardWrap.classList.add('col-md-4');
+
+                                const card = document.createElement('div');
+                                card.classList.add('card');
+
+                                const header = document.createElement('h5');
+                                header.classList.add('card-header');
+                                header.innerText = data[i].name;
+
+                                card.appendChild(header);
+                                cardWrap.appendChild(card);
+                                cardContainer.appendChild(cardWrap);
+                            }
+
+                            // <div class="col-md-4">
+                            //     <div class="card">
+                            //         <h5 class="card-header">
+                            //             Card title
+                            //         </h5>
+                            //         <div class="card-body">
+                            //             <p class="card-text">
+                            //                 Card content
+                            //             </p>
+                            //         </div>
+                            //         <div class="card-footer">
+                            //             Card footer
+                            //         </div>
+                            //     </div>
+                            // </div>
                         })();
 
                         new Chart("myChart", {
