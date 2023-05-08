@@ -49,51 +49,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div class="row" id="card-container">
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <h5 class="card-header">
-                                        Card title
-                                    </h5>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            Card content
-                                        </p>
-                                    </div>
-                                    <div class="card-footer">
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalPopovers"> View Project Tasks </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <h5 class="card-header">
-                                        Card title
-                                    </h5>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            Card content
-                                        </p>
-                                    </div>
-                                    <div class="card-footer">
-                                        Card footer
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <h5 class="card-header">
-                                        Card title
-                                    </h5>
-                                    <div class="card-body">
-                                        <p class="card-text">
-                                            Card content
-                                        </p>
-                                    </div>
-                                    <div class="card-footer">
-                                        Card footer
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -102,7 +58,7 @@
                         <script>
 
                         (async () => {
-                            const response = await fetch("http://localhost:3000/analyse/projects/1");
+                            const response = await fetch("http://localhost:3000/analyse/projects/2");
                             const data = await response.json();
                             console.log(data);
 
@@ -119,7 +75,21 @@
                                 header.classList.add('card-header');
                                 header.innerText = data[i].name;
 
+                                const body = document.createElement('h5');
+                                body.classList.add('card-body');
+                                body.innerText = data[i].deadline;
+
+                                const footer = document.createElement('button');
+                                footer.classList.add('card-footer');
+                                footer.setAttribute("class", "btn btn-primary");
+                                footer.setAttribute("data-bs-toggle", "modal");
+                                footer.setAttribute("data-bs-target", "#exampleModalPopovers");
+                                footer.innerHTML = "View Projects";
+                                
+
                                 card.appendChild(header);
+                                card.appendChild(body);
+                                card.appendChild(footer);
                                 cardWrap.appendChild(card);
                                 cardContainer.appendChild(cardWrap);
                             }

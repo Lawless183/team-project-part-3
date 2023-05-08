@@ -13,3 +13,12 @@ h1{
     margin-bottom: 5px;
 }
 
+.card{
+    margin-bottom: 20px;
+}
+
+button{
+    height: fit-content;
+    width: fit-content;
+    
+}
