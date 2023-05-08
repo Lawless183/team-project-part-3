@@ -2,6 +2,7 @@ h1{
     color: white;
     text-align: center;
     background-color: rgb(62, 0, 103);
+    padding: 5px 5px 5px 5px;
 }
 
 #cardrow{
@@ -20,5 +21,25 @@ h1{
 button{
     height: fit-content;
     width: fit-content;
-    
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+
+#graph-container{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+}
+
+#jumbotron{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+    padding: 15px 15px 15px 15px;
+    margin-bottom: 15px;
+}
+
+#card-container{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+    padding: 25px 25px 25px 25px;
+    margin-right: 1px;
 }
