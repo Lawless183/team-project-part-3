@@ -5,30 +5,62 @@ const router = express.Router();
 
 const user = 1;
 
-router.get('/', async (req, res) => {
-  const messages = await prisma.message.findMany({
-    where: {
-      OR: [
-        { senderID: user },
-        { recipientID: user }
-      ]
-    }
-  });
-  res.json(messages);
-
-  const contacts = await prisma.user.findMany({
-    select: {
-      email: true
-    }
-  });
-  res.json(contacts);
-
-});
+// router.get('/', async (req, res) => {
+//   const messages = await prisma.message.findMany({
+//     where: {
+//       OR: [
+//         { senderID: user },
+//         { recipientID: user }
+//       ]
+//     }
+//   });
+//   res.json(messages);
+// });
+  
 
 // router.get('/', async (req, res) => {
-  
+//   const contacts = await prisma.user.findMany({
+//     select: {
+//       name: true
+//     }
+//   });
+//   res.json(contacts);
 // });
 
+// Route for retrieving names from the User table
+router.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        name: true,
+      },
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route for retrieving rows from the Messages table
+router.get('/messages', async (req, res) => {
+  try {
+    const messages = await prisma.message.findMany({
+      where: {
+        OR: [
+          { senderID: user },
+          { recipientID: user }
+        ]
+      }
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.error('Error retrieving messages:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 export default router;
 
