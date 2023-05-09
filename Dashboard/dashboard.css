@@ -1,10 +1,16 @@
-h1{
+#page-title{
     color: white;
     text-align: center;
     background-color: rgb(62, 0, 103);
     padding: 5px 5px 5px 5px;
 }
-
+#user-welcome{
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+    background-color: rgb(62, 0, 103);
+    padding: 5px 5px 5px 5px;
+}
 #cardrow{
     height: 75vh;
     width: 100vw;
@@ -16,6 +22,7 @@ h1{
 
 .card{
     margin-bottom: 20px;
+
 }
 
 button{
@@ -23,6 +30,9 @@ button{
     width: fit-content;
     margin-left: 20px;
     margin-bottom: 10px;
+}
+.button{
+    background-color: rgb(62, 0, 103);
 }
 
 #graph-container{
