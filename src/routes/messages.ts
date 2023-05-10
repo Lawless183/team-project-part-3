@@ -27,6 +27,19 @@ router.get('/', async (req, res) => {
   res.json([messagesContent, contactsNames]);
 });
 
+const recipientID = 2;
+const messageContent = "This is new content";
+
+router.post('/:id', async (req, res) => {
+  const newMessage = await prisma.message.create({
+    data: {
+      senderID: Number(req.params.id),
+      recipientID: recipientID, 
+      content: messageContent, 
+    },
+  });
+});
+
 export default router;
 
 // pull list of all contacts - done
@@ -37,3 +50,4 @@ export default router;
   // create relation to group table on id
 // pull list of all message content for group messages 
   // with contact names instead of sender/recipient
+// create post functions 

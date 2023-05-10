@@ -25,12 +25,12 @@ model Message {
   id          Int      @id @default(autoincrement())
   senderID    Int
   recipientID Int
-//  groupID     Int?
+// groupID     Int?
   dateTime    DateTime @default(now())
   content     String
   sender      User     @relation("messageSender", fields: [senderID], references: [id])
   recipient   User     @relation("messageRecipient", fields: [recipientID], references: [id])
-//  group       Group?   @relation(fields: [groupID], references: [id])
+//  group       Group?   @relation(fields: [groupID], references: [id]) 
 }
 
 model Group {
