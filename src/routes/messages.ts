@@ -3,9 +3,27 @@ import prisma from '../prisma';
 
 const router = express.Router();
 
+
+const senderID = 1;
+const recipientID = 2;
+const messageContent = "This is new content";
+
+router.post('/messages', async (req, res) => {
+  console.log('POST req received');
+  const newMessage = await prisma.message.create({
+    data: {
+      senderID: senderID,
+      recipientID: recipientID, 
+      content: messageContent, 
+    },
+  });
+  res.json(newMessage);
+  console.log("Message added: ", newMessage);
+});
+
 const user = 1;
 
-router.get('/', async (req, res) => {
+router.get('/messages', async (req, res) => {
   const messages = await prisma.message.findMany({
     where: {
       OR: [
@@ -27,18 +45,7 @@ router.get('/', async (req, res) => {
   res.json([messagesContent, contactsNames]);
 });
 
-const recipientID = 2;
-const messageContent = "This is new content";
 
-router.post('/:id', async (req, res) => {
-  const newMessage = await prisma.message.create({
-    data: {
-      senderID: Number(req.params.id),
-      recipientID: recipientID, 
-      content: messageContent, 
-    },
-  });
-});
 
 export default router;
 
@@ -51,3 +58,7 @@ export default router;
 // pull list of all message content for group messages 
   // with contact names instead of sender/recipient
 // create post functions 
+  // find out how to obtain recipientID 
+  // yet to update schema to add groupID to message
+  // all direct messages will be given a null marker in this field 
+  // all group messages will be given the id of the group its being sent to

@@ -11,7 +11,7 @@ const port = process.env.SERVER_PORT || 3000;
 const app = express();
 
 app.use('/user', userRoutes);
-app.use('/messages', messagesRoutes);
+app.use('/', messagesRoutes);
 
 async function main() {
     app.listen(port, () => console.log(`Server running on port ${port}`));
