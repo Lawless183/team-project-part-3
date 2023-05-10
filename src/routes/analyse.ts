@@ -79,9 +79,27 @@ router.get('/user/:userID/projects', async (req, res) => {
     const projects = await prisma.project.findMany(find);
 
     // @ts-ignore
-    const analysedProject = projects.map(analyseProject);
+    const analysedProjects = projects.map(analyseProject);
 
-    res.json(analysedProject);
+    const analysedProjectsWithUsers = await Promise.all(analysedProjects.map(async project => {
+
+        if (!project.tasks || !((project.teamLeaderID == userID) || user.isManager)) return project;
+
+        const users = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: project.tasks.map(task => task.userID)
+                }
+            }
+        });
+
+        return {
+            ...project,
+            users
+        };
+    }));
+
+    res.json(analysedProjectsWithUsers);
 });
 
 function dateDiffInDays(a: Date, b: Date) {
@@ -94,6 +112,8 @@ function dateDiffInDays(a: Date, b: Date) {
 }
 
 type AnalyseProject = Project & {
+    teamLeader?: User | undefined,
+    tasks?: (Task & {category: TaskCategory})[] | undefined,
     taskData: {
         completed: Number,
         todo: Number,
