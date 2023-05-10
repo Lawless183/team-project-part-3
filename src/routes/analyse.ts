@@ -1,10 +1,10 @@
 import express from 'express';
 import prisma from '../prisma';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, Project, Task } from '@prisma/client';
 
 const router = express.Router();
 
-router.get('/projects/:userID', async (req, res) => {
+router.get('/user/:userID/projectList', async (req, res) => {
 
     // Reject request if userID is not a number
     const userID = Number(req.params.userID);
@@ -76,7 +76,7 @@ router.get('/projects/:userID', async (req, res) => {
     res.json(project);
 });
 
-router.get('/projectData/:projectID', async (req, res) => {
+router.get('/project/:projectID', async (req, res) => {
 
     // Reject request if projectID is not a number
     const projectID = Number(req.params.projectID);
@@ -100,28 +100,9 @@ router.get('/projectData/:projectID', async (req, res) => {
         return;
     }
 
-    const taskData = {
-        COMPLETED: 0,
-        TODO: 0,
-        ONGOING: 0,
-        TOTAL: 0
-    }
+    const analysedProject = analyseProject(project);
 
-    for (const i in project.tasks) {
-        const task = project.tasks[i];
-        taskData[task.status]++;
-        taskData.TOTAL++;
-    }
-
-    const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
-
-    const fullProject = {
-        ...project,
-        taskData,
-        daysToDeadline
-    }
-
-    res.json(fullProject);
+    res.json(analysedProject);
 
 });
 
@@ -132,6 +113,42 @@ function dateDiffInDays(a: Date, b: Date) {
     const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
   
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-  }
+}
+
+type AnalyseProject = {
+    project: Project,
+    taskData: {
+        completed: Number,
+        todo: Number,
+        ongoing: Number,
+        total: Number
+    },
+    daysToDeadline: Number
+};
+
+function analyseProject(project: Project & {tasks: Task[]}): AnalyseProject {
+
+    const taskData = {
+        completed: 0,
+        todo: 0,
+        ongoing: 0,
+        total: 0
+    };
+
+    for (const i in project.tasks) {
+        const task = project.tasks[i];
+        // @ts-ignore
+        taskData[task.status.toLowerCase()]++;
+        taskData.total++;
+    }
+
+    const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
+
+    return {
+        project,
+        taskData,
+        daysToDeadline
+    };
+}
 
 export default router;
