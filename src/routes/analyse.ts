@@ -102,6 +102,41 @@ router.get('/user/:userID/projects', async (req, res) => {
     res.json(analysedProjectsWithUsers);
 });
 
+router.get('/user/:userID/tasks', async (req, res) => {
+
+    // Reject request if userID is not a number
+    const userID = Number(req.params.userID);
+    if (isNaN(userID)) {
+        res.json(null);
+        return;
+    }
+
+    // Reject request if user does not exist
+    const user = await prisma.user.findFirst({
+        where: {
+            id: {
+                equals: userID
+            }
+        }
+    });
+    if (user == null) {
+        res.json(null);
+        return;
+    }
+
+    const tasks = await prisma.task.findMany({
+        where: {
+            userID
+        },
+        include: {
+            category: true
+        }
+    });
+
+    res.json(tasks);
+
+});
+
 function dateDiffInDays(a: Date, b: Date) {
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
     // Discard the time and time-zone information.

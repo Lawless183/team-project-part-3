@@ -88,6 +88,10 @@
                             const data = await response.json();
                             console.log(data);
 
+                            const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
+                            const tasks = await taskResponse.json();
+                            console.log(tasks);
+
                             const cardContainer = document.getElementById('card-container');
 
                             for (const i in data) {
