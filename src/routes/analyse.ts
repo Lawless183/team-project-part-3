@@ -79,9 +79,62 @@ router.get('/user/:userID/projects', async (req, res) => {
     const projects = await prisma.project.findMany(find);
 
     // @ts-ignore
-    const analysedProject = projects.map(analyseProject);
+    const analysedProjects = projects.map(analyseProject);
 
-    res.json(analysedProject);
+    const analysedProjectsWithUsers = await Promise.all(analysedProjects.map(async project => {
+
+        if (!project.tasks || !((project.teamLeaderID == userID) || user.isManager)) return project;
+
+        const users = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: project.tasks.map(task => task.userID)
+                }
+            }
+        });
+
+        return {
+            ...project,
+            users
+        };
+    }));
+
+    res.json(analysedProjectsWithUsers);
+});
+
+router.get('/user/:userID/tasks', async (req, res) => {
+
+    // Reject request if userID is not a number
+    const userID = Number(req.params.userID);
+    if (isNaN(userID)) {
+        res.json(null);
+        return;
+    }
+
+    // Reject request if user does not exist
+    const user = await prisma.user.findFirst({
+        where: {
+            id: {
+                equals: userID
+            }
+        }
+    });
+    if (user == null) {
+        res.json(null);
+        return;
+    }
+
+    const tasks = await prisma.task.findMany({
+        where: {
+            userID
+        },
+        include: {
+            category: true
+        }
+    });
+
+    res.json(tasks);
+
 });
 
 function dateDiffInDays(a: Date, b: Date) {
@@ -94,6 +147,8 @@ function dateDiffInDays(a: Date, b: Date) {
 }
 
 type AnalyseProject = Project & {
+    teamLeader?: User | undefined,
+    tasks?: (Task & {category: TaskCategory})[] | undefined,
     taskData: {
         completed: Number,
         todo: Number,
@@ -111,8 +166,7 @@ function analyseProject(project: Project & {
     const taskData = {
         completed: 0,
         todo: 0,
-        ongoing: 0,
-        total: 0
+        ongoing: 0
     };
 
     const categoryData = {};
