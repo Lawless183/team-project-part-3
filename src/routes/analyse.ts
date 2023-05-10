@@ -111,8 +111,7 @@ function analyseProject(project: Project & {
     const taskData = {
         completed: 0,
         todo: 0,
-        ongoing: 0,
-        total: 0
+        ongoing: 0
     };
 
     const categoryData = {};
