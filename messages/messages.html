@@ -10,8 +10,8 @@
                             {id: 02,name: "John Watson",numUndreadMessages:0, messages:[{isMyMessage:true, content:"I need help"}]}];
             
 
-            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS", numUndreadMessages: 1, messages:[{contactName: "Sherlock Homes", content:"John can you spot me rent"}, {contactName: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
-                                    {id: 02, name: "Holmes Homeeeesss", numUndreadMessages: 3, messages:[{contactName: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {contactName: "Sherlock Holmes", content: "happy birthday, mother"}]}];
+            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS", numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
+                                    {id: 02, name: "Holmes Homeeeesss", numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
             let userID = 03;
             let username = "Jim Moriarty";
             $(document).ready(function(){
@@ -31,7 +31,12 @@
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
                 if(message != ""){
-                    showMessage(message, true);
+                    if(isDirectMessage){
+                    showDirectMessage(message, true);
+                    }
+                    else{
+                        showGroupMessage(message, username);
+                    }
                     addMessage(message,chatID, isDirectMessage, true);
                     //ajax call to store message
                 }
@@ -52,7 +57,6 @@
                         }
                     }
                 }
-                console.log("added");
             }
 
             //SIDEBAR FUNCTIONS
@@ -94,7 +98,7 @@
 
             //append one group messages to the side bar
             function appendGroupMessages(group){
-                let html = "<button id = 'group_contact_" + group.id + "' class='list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3' onclick = 'switchGroupChat(this)'>\
+                let html = "<button id = 'group_chat_" + group.id + "' class='list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3' onclick = 'switchGroupChat(this)'>\
                             <div class='ms-2 me-auto'>\
                                 <div class='fw-bold'>" +
                                     group.name +
@@ -109,15 +113,15 @@
 
             //CHATBOX FUNCTIONS
             //add a message to the chat box
-            function showMessage(message, isMyMessage){
+            function showDirectMessage(message, isMyMessage){
                 let html = ""
                 if(isMyMessage){
-                    html += "<div class = 'd-flex justify-content-end'>\
+                    html += "<div class = 'd-flex justify-content-end m-1'>\
                     <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
                 }
                 else{
-                    html += "<div class = 'd-flex justify-content-start'>\
-                    <span class = 'thierMessage rounded-pill p-3'>" + message +"</span>"
+                    html += "<div class = 'd-flex justify-content-start m-1'>\
+                    <span class = 'theirMessage rounded-pill p-3'>" + message +"</span>"
                 }
                 html += "\<div>"
                 $("#chatbox").append(html)
@@ -126,12 +130,10 @@
             function clearChatbox(){
                 $("#chatbox").empty();
             }
-            //clear chat and list new messages 
+            //clear chat and list direct messages 
             function switchDirectChat(button){
                 clearChatbox();
                 let id = button.id.replace("direct_contact_", "");
-                
-                //change input text data values
 
                 //find contacts messages and display them
                 for(let i = 0; i < directMessages.length; i++){
@@ -149,16 +151,51 @@
                     }
                 }
             }
-
-            function switchGroupContact(button){
-
+            //clear chat and list group messages
+            function switchGroupChat(button){
+                clearChatbox();
+                let id = button.id.replace("group_chat_","");
+                //find the groupChat
+                for( let i =0; i < groupMessages.length; i++){
+                    if(id  == groupMessages[i].id){
+                        listMessages(groupMessages[i].messages, false);
+                        //clear notifications and reload the chat
+                        groupMessages[i].numUndreadMessages = 0;
+                        clearContacts();
+                        listGroupContacts();
+                        //change chat title
+                        $("#chat_title").html(groupMessages[i].name);
+                        //change input box data values
+                        $("#messageInput").data("chatID", groupMessages[i].id);
+                        $("#messageInput").data("isDirectMessage", false);
+                    }
+                }
             }
             //iterate over mesages and add them
             function listMessages(messages, isDirect){
                 for(let i = 0; i < messages.length; i++){
-                    //TODO check if direct message or group message - add name to if group
-                    showMessage(messages[i].content, messages[i].isMyMessage);
+                    if (isDirect){
+                        showDirectMessage(messages[i].content, messages[i].isMyMessage);
+                    }
+                    else{
+                        showGroupMessage(messages[i].content, messages[i].sender)
+                    }
                 }
+            }
+            //show group message
+            function showGroupMessage(message, sender){
+                //own message
+                let html = "";
+                if(sender == username){
+                    html += "<div class = 'd-flex justify-content-end m-1'>\
+                        <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
+                }
+                else{
+                    html += "<div class = 'd-flex justify-content-start m-1'>\
+                    <span class = 'theirMessage rounded-pill p-3'><p class = 'nameTag m-0'>"+sender+ "</p>" + message +"</span>"
+                }
+                html += "\<div>";
+                $("#chatbox").append(html)
             }
 
         </script>
@@ -186,7 +223,7 @@
                 background-color: lightblue;
                 align-self: self-end;
             }
-            .thierMessage{
+            .theirMessage{
                 background-color: grey;
             }
             .message{
@@ -195,7 +232,10 @@
             #chat_title{
                 background-color: rgb(62, 0, 103);
                 color: white;
-                font: bold;
+                font-weight: bold;
+            }
+            .nameTag{
+                font-weight:bold;
             }
         </style>
     </head>
