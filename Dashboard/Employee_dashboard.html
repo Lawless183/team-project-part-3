@@ -26,7 +26,7 @@
                                     <h5 class="modal-title" id="exampleModalPopoversLabel">Tasks</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body" id="modal-container">
                                     <div class="card">
                                         <h5 class="card-header">
                                             Task Title
@@ -89,6 +89,7 @@
                             console.log(data);
 
                             const cardContainer = document.getElementById('card-container');
+                            const modalContainer = document.getElementById("modal-container");
 
                             for (const i in data) {
                                 const cardWrap = document.createElement('div');
@@ -111,6 +112,29 @@
                                 footer.setAttribute("data-bs-toggle", "modal");
                                 footer.setAttribute("data-bs-target", "#exampleModalPopovers");
                                 footer.innerHTML = "View Projects";
+                                footer.addEventListener("click", () => {
+                                    for (const j in data[i].tasks){
+                                    const taskCardWrap = document.createElement('div');
+                                    taskCardWrap.classList.add("col-md-12");
+
+                                    const taskCard = document.createElement("div");
+                                    taskCard.classList.add('card', 'text-black', 'bg-info', 'mb-3');
+
+                                    const taskHeader = document.createElement("h5");
+                                    taskHeader.classList.add("card-header");
+                                    taskHeader.innerText = data[i].tasks[j].description;
+
+                                    const taskBody = document.createElement("h5");
+                                    taskBody.classList.add("card-body");
+                                    taskBody.innerText = data[i].tasks[j].deadline;
+                                    taskBody.innerText = data[i].tasks[j].status;
+
+                                    taskCard.appendChild(taskHeader);
+                                    taskCard.appendChild(taskBody);
+                                    taskCardWrap.appendChild(taskCard);
+                                    modalContainer.appendChild(taskCardWrap);
+                                    }
+                                });
                                 
 
                                 card.appendChild(header);
@@ -119,6 +143,13 @@
                                 cardWrap.appendChild(card);
                                 cardContainer.appendChild(cardWrap);
                             }
+
+                            const modal = document.getElementById("exampleModalPopovers");
+                            modal.addEventListener("hidden.bs.modal", () => {
+                                console.log("closed");
+                                modalContainer.innerHTML = "";
+                            })
+
 
                             // <div class="col-md-4">
                             //     <div class="card">
@@ -135,6 +166,7 @@
                             //         </div>
                             //     </div>
                             // </div>
+
                         })();
 
                         new Chart("myChart", {
