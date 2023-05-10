@@ -1,10 +1,10 @@
 import express from 'express';
 import prisma from '../prisma';
-import type { Prisma, Project, Task } from '@prisma/client';
+import type { Prisma, Project, Task, TaskCategory, User } from '@prisma/client';
 
 const router = express.Router();
 
-router.get('/user/:userID/projectList', async (req, res) => {
+router.get('/user/:userID/projects', async (req, res) => {
 
     // Reject request if userID is not a number
     const userID = Number(req.params.userID);
@@ -32,7 +32,11 @@ router.get('/user/:userID/projectList', async (req, res) => {
         where?: Prisma.ProjectWhereInput
     } = {
         include: {
-            tasks: user.isManager ? true : { // show all tasks if manager
+            tasks: user.isManager ? {
+                include: {
+                    category: true
+                }
+            } : { // show all tasks if manager
                 where: {
                     OR: [
                         {
@@ -72,38 +76,12 @@ router.get('/user/:userID/projectList', async (req, res) => {
         }
     }
 
-    const project = await prisma.project.findMany(find);
-    res.json(project);
-});
+    const projects = await prisma.project.findMany(find);
 
-router.get('/project/:projectID', async (req, res) => {
-
-    // Reject request if projectID is not a number
-    const projectID = Number(req.params.projectID);
-    if (isNaN(projectID)) {
-        res.json(null);
-        return;
-    }
-
-    const project = await prisma.project.findFirst({
-        where: {
-            id: projectID
-        },
-        include: {
-            tasks: true
-        }
-    });
-
-    // Reject request if project does not exist
-    if (project == null) {
-        res.json(null);
-        return;
-    }
-
-    const analysedProject = analyseProject(project);
+    // @ts-ignore
+    const analysedProject = projects.map(analyseProject);
 
     res.json(analysedProject);
-
 });
 
 function dateDiffInDays(a: Date, b: Date) {
@@ -115,18 +93,20 @@ function dateDiffInDays(a: Date, b: Date) {
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
 }
 
-type AnalyseProject = {
-    project: Project,
+type AnalyseProject = Project & {
     taskData: {
         completed: Number,
         todo: Number,
-        ongoing: Number,
-        total: Number
+        ongoing: Number
     },
+    categoryData: any,
     daysToDeadline: Number
 };
 
-function analyseProject(project: Project & {tasks: Task[]}): AnalyseProject {
+function analyseProject(project: Project & {
+    teamLeader?: User | undefined,
+    tasks?: (Task & {category: TaskCategory})[] | undefined
+}): AnalyseProject {
 
     const taskData = {
         completed: 0,
@@ -135,18 +115,32 @@ function analyseProject(project: Project & {tasks: Task[]}): AnalyseProject {
         total: 0
     };
 
-    for (const i in project.tasks) {
-        const task = project.tasks[i];
-        // @ts-ignore
-        taskData[task.status.toLowerCase()]++;
-        taskData.total++;
+    const categoryData = {};
+
+    if (project.tasks) {
+
+        for (const i in project.tasks) {
+            const task = project.tasks[i];
+            // @ts-ignore
+            taskData[task.status.toLowerCase()]++;
+            if (Object.keys(categoryData).includes(task.category.category)) {
+                // @ts-ignore
+                categoryData[task.category.category]++;
+            }
+            else {
+                // @ts-ignore
+                categoryData[task.category.category] = 1;
+            }
+        }
+
     }
 
     const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
 
     return {
-        project,
+        ...project,
         taskData,
+        categoryData,
         daysToDeadline
     };
 }
