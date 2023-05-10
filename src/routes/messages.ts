@@ -31,7 +31,7 @@ export default router;
 
 // pull list of all contacts - done
 // pull list of all message content for direct messages - done 
-// adjust database schema to allow for group messaging 
+// adjust database schema to allow for group messaging - almost done
   // add group id column to message column
   // assign direct messages a null tag in this column 
   // create relation to group table on id
