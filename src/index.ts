@@ -3,12 +3,15 @@ import prisma from './prisma';
 import userRoutes from './routes/user';
 import analyseRoutes from './routes/analyse';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
 const port = process.env.SERVER_PORT || 3000;
 
 const app = express();
+
+app.use(cors());
 
 app.use('/user', userRoutes);
 app.use('/analyse', analyseRoutes);
