@@ -18,6 +18,8 @@
             let userID = 03;
             let username = "Jim Moriarty";
             $(document).ready(function(){
+                loadMessages();
+                loadContacts();
                 listDirectContacts();
 
                 $(document).on('keypress',function(e) {
@@ -30,6 +32,16 @@
                     }
                 });
             });
+            //load data
+            function loadMessages(){
+                //TODO API CALL
+            }
+
+            //load all contacts
+            function loadContacts(){
+                //TODO API CALL
+            }
+
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
@@ -41,11 +53,14 @@
                         showGroupMessage(message, username);
                     }
                     addMessage(message,chatID, isDirectMessage, true);
-                    //TODO ajax call to store message
+                    saveMessage();
+                    //TODO API CALL
                 }
+                console.log(directMessages + " | " + chatID);
             }  
             //add message to the variables
             function addMessage(message, chatID, isDirectMessage, isMyMessage){
+                console.log(chatID);
                 if(isDirectMessage){
                     for(let i =0; i < directMessages.length; i++ ){
                         if (directMessages[i].id == chatID){
@@ -60,6 +75,10 @@
                         }
                     }
                 }
+            }
+
+            function saveMessage(){
+                //TODO API CALL
             }
 
             //SIDEBAR FUNCTIONS
@@ -219,11 +238,11 @@
                 $("#newContacts").html("");
                 filter = $("#searchBox").val().toUpperCase();
                 for(var i =0; i < listOfContacts.length; i++){
-                    let name = listOfContacts[i].name.toUpperCase();
+                    let name = listOfContacts[i].name;
                     let id = listOfContacts[i].id;
                     var used = false;
                     for(var j = 0; j < directMessages.length; j++){
-                        if (name == directMessages[j].name.toUpperCase()){
+                        if (name.toUpperCase() == directMessages[j].name.toUpperCase()){
                             used = true;
                         }
                     }
@@ -231,7 +250,7 @@
                         continue;
                     }
                     else if(name.indexOf(filter) > -1){
-                        let html = "<button class = 'contact p-2 data-contact-id = '" +id+ "' onclick = 'createDirectChat(this)'>" + name + "</button>"
+                        let html = "<button class = 'contact p-2' data-contact-id = '" +id+ "' onclick = 'createDirectChat(this)'>" + name + "</button>"
                         $("#newContacts").append(html);
                     }
                 }
@@ -239,7 +258,13 @@
 
             //creates a new direct chat
             function  createDirectChat(button){
-                
+                let id = button.getAttribute("data-contact-id");
+                let name = button.innerText;
+                let newDirectContact = {id : +id, name: name,numUndreadMessages: 0,messages:[]}
+                directMessages.push(newDirectContact);
+                console.log(directMessages);
+                appendDirectContact(newDirectContact);
+                //TO DO API CALL 
             }
 
 
