@@ -7,8 +7,8 @@
             let directMessages = [{id: 01, name: "Sherlock Holmes",numUndreadMessages:10, messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
                             {id: 02,name: "John Watson",numUndreadMessages:0, messages:[{isMyMessage:true, content:"I need help"}]}];
             
-            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS", numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
-                                    {id: 02, name: "Holmes Homeeeesss", numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
+            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS",users: [01, 02, 03], numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
+                                    {id: 02, name: "Holmes Homeeeesss", users:[06, 01, 03],numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
             
             let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
             let userID = 03;
@@ -37,17 +37,23 @@
             //periodic call to check for new messages
             function getNewMessages(){
                 console.log("check");
+
             }
 
 
             //load data
             function loadGroups(){
-                //TODO API CALL
+                //TODO API call get [{id, name, numUnreadMessages, messages: [{sender, content}]}] with groups that given user id in
             }
 
             //load all contacts
             function loadContacts(){
-                //TODO API CALL
+                //TODO API CALL get [{id, name}] of all contacts
+            }
+
+            //load messages
+            function loadMessages(){
+                //TODO API CALL get [{id, name, numUnreadMessages, messages: [{isMyMessage, content}]}]; 
             }
 
             //send entered message to the recipant
@@ -85,8 +91,8 @@
                 }
             }
 
-            function saveMessage(){
-                //TODO API CALL
+            function saveMessage(message, chatID, isDirectMessage){
+                //TODO API CALL 
             }
 
             //SIDEBAR FUNCTIONS
@@ -324,6 +330,11 @@
                 //todo
             }
 
+            function saveContactToGroup(){
+                //TODO API CALL
+                //post group chat id and user id
+            }
+
             function createUniqueGroupID(){
                 let lastID = groupMessages[groupMessages.length -1];
                 let newID = lastID + 1;
@@ -342,6 +353,7 @@
 
             function saveGroup(group){
                 //TODO API CALL
+                //give group id, name
             }
 
 
