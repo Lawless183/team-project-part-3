@@ -16,6 +16,7 @@
 
             //get new messages every so often
             setInterval(getNewMessages, 5000);
+            setInterval(getNewGroupMessages, 5000);
             $(document).ready(function(){
                 loadGroups();
                 loadContacts();
@@ -33,13 +34,25 @@
             });
 
             //periodic call to check for new messages
-            function getNewMessages(){
+            function getNewDirectMessages(){
                 $.post({url: "/messages",
                         data: {userID: userID, time: Date.now()},
                         success: function(result){
-                            console.log("saved direct message");
+                            console.log("got new direct message");
+                            let messages = JSON.parse(result);
                         }
                     });
+            }
+            function getNewGroupMessages(){
+                function getNewDirectMessages(){
+                $.post({url: "/messages",
+                        data: {userID: userID, time: Date.now()},
+                        success: function(result){
+                            console.log("got new weight message");
+                            let messages = JSON.parse(result);
+                        }
+                    });
+                }
             }
 
             //load data
@@ -48,7 +61,8 @@
                 $.post({url: "/messages",
                         data: userID,
                         success: function(result){
-                            console.log("light weight bby");
+                            console.log("loaded groups");
+                            //groupMessages = JSON.Parse(result)
                         }
                 });
             }
@@ -59,6 +73,7 @@
                 $.get({url: "/messages",
                         success: function(result){
                             console.log("loaded contacts");
+                            //listOfContacts = JSON.parse(result);
                         }
                 });
             }
@@ -70,6 +85,7 @@
                         data: userID,
                         success: function(result){
                             console.log("loaded messages");
+                            //directMessages = JSON.parse(result)
                         }
                 });
             }
