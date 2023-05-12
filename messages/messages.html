@@ -19,6 +19,7 @@
             $(document).ready(function(){
                 loadGroups();
                 loadContacts();
+                loadMessages()
                 listDirectContacts();
                 $(document).on('keypress',function(e) {
                     if(e.which == 13) {
@@ -34,22 +35,44 @@
             //periodic call to check for new messages
             function getNewMessages(){
                 console.log("check");
-
+                $.post({url: "/messages",
+                        data: {userID: userID, time: Date.now()},
+                        success: function(result){
+                            console.lo("saved direct message");
+                        }
+                    });
             }
 
             //load data
             function loadGroups(){
                 //TODO API call get [{id, name, numUnreadMessages, messages: [{sender, content}]}] with groups that given user id in
+                $.post({url: "/messages",
+                        data: userID,
+                        success: function(result){
+                            console.log("light weight bby");
+                        }
+                });
             }
 
             //load all contacts
             function loadContacts(){
                 //TODO API CALL get [{id, name}] of all contacts
+                $.get({url: "/messages",
+                        success: function(result){
+                            console.log("loaded contacts");
+                        }
+                });
             }
 
             //load messages
             function loadMessages(){
                 //TODO API CALL get [{id, name, numUnreadMessages, messages: [{isMyMessage, content}]}]; 
+                $.post({url: "/messages",
+                        data: userID,
+                        success: function(result){
+                            console.log("loaded messages");
+                        }
+                });
             }
 
             //send entered message to the recipant
@@ -70,7 +93,6 @@
             }  
             //add message to the variables
             function addMessage(message, chatID, isDirectMessage, isMyMessage){
-                //console.log(chatID);
                 if(isDirectMessage){
                     for(let i =0; i < directMessages.length; i++ ){
                         if (directMessages[i].id == chatID){
@@ -87,8 +109,23 @@
                 }
             }
 
-            function saveMessage(message, chatID, isDirectMessage){
-                //TODO API CALL 
+            function saveMessage(message, id, isDirectMessage){
+                if(isDirectMessage){
+                    $.post({url: "/messages",
+                        data: {senderID: userID, recipientID: id, message: message},
+                        success: function(result){
+                            console.lo("saved direct message");
+                        }
+                    });
+                }
+                else{
+                    $.post({url: "/messages",
+                        data: {senderID: userID, chatID: id, message: message},
+                        success: function(result){
+                            console.lo("saved group message");
+                        }
+                    });
+                }
             }
 
             //SIDEBAR FUNCTIONS
@@ -310,12 +347,11 @@
 
             function createGroupChat(){
                 let name = $("#groupNameInput").val();
-                let id = createUniqueGroupID();
+                let id = saveGroup(group);
                 let group = {id: id, name: name, numUndreadMessages: 0, messages: []}
 
                 groupMessages.push(group);
                 listGroupContacts();
-                saveGroup(group);
 
             }
 
@@ -323,30 +359,27 @@
                 //TODO
             }
 
-            function saveContactToGroup(){
+            function saveContactToGroup(id, chatID){
                 //TODO API CALL
                 //post group chat id and user id
-            }
-
-            function createUniqueGroupID(){
-                let lastID = groupMessages[groupMessages.length -1];
-                let newID = lastID + 1;
-                let unique = false;
-                while (!unique){
-                    for(var i = 0; i < groupMessages.length; i++){
-                        if(groupMessages[i].id == newID){
-                            newID += 1;
-                            unique = false
+                $.post({url: "/messages",
+                        data: {newUserID: id, chatID: chatID},
+                        success: function(result){
+                            console.log("saved contact to group");
                         }
-                    }
-                    unique = true;
-                }
-                return newID;
+                    });
             }
 
-            function saveGroup(group){
+
+            function saveGroup(groupName, id){
                 //TODO API CALL
-                //give group id, name
+                $.post({url: "/messages",
+                        data: {groupName: groupName, userID: id},
+                        success: function(result){
+                            console.log("saved group");
+                            return result
+                        }
+                    });
             }
         </script>
         <style>
