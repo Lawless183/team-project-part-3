@@ -29,7 +29,7 @@ model Message {
   dateTime    DateTime @default(now())
   content     String
   sender      User     @relation("messageSender", fields: [senderID], references: [id])
-  recipient   User     @relation("messageRecipient", fields: [recipientID], references: [id])
+  recipient   User?     @relation("messageRecipient", fields: [recipientID], references: [id])
   group       Group?   @relation(fields: [groupID], references: [id]) 
 }
 
