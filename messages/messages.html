@@ -4,15 +4,11 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script>
-
-           
             let directMessages = [{id: 01, name: "Sherlock Holmes",numUndreadMessages:10, messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
                             {id: 02,name: "John Watson",numUndreadMessages:0, messages:[{isMyMessage:true, content:"I need help"}]}];
             
-
             let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS", numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
                                     {id: 02, name: "Holmes Homeeeesss", numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
-            
             
             let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
             let userID = 03;
@@ -41,7 +37,6 @@
             function loadContacts(){
                 //TODO API CALL
             }
-
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
@@ -88,7 +83,9 @@
             };
             //load the lsit of direct messages
             function listDirectContacts(){
-                clearContacts();    
+                clearContacts();   
+                hideGroupDropdown(); 
+                hideContactDropdown();
                 for(let i = 0; i < directMessages.length; i++  ){
                     appendDirectContact(directMessages[i]);
                 }
@@ -112,6 +109,9 @@
             //load the list of groups
             function listGroupContacts(){
                 clearContacts();
+                hideContactDropdown();
+                hideGroupDropdown();
+
                 for(let i = 0; i < groupMessages.length; i++){
                     appendGroupMessages(groupMessages[i])
                 }
@@ -153,6 +153,10 @@
             }
             //clear chat and list direct messages 
             function switchDirectChat(button){
+                //hide in this order to make button do the correct one
+                hideGroupDropdown();
+                hideContactDropdown();
+
                 clearChatbox();
                 let id = button.id.replace("direct_contact_", "");
 
@@ -174,6 +178,10 @@
             }
             //clear chat and list group messages
             function switchGroupChat(button){
+
+                hideContactDropdown();
+                hideGroupDropdown();
+
                 clearChatbox();
                 let id = button.id.replace("group_chat_","");
                 //find the groupChat
@@ -221,20 +229,21 @@
             function showContactDropdown(){
                 $("#addButton").html("hide");
                 $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
                 $("#addButton").click(hideContactDropdown);
                 $("#contactsDropdown").show();
-
-                
+    
             }
             function hideContactDropdown(){
                 $("#addButton").html("+");
                 $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
                 $("#addButton").click(showContactDropdown);
-                 $("#contactsDropdown").hide();
+                $("#contactsDropdown").hide();
+
             }
 
-            function filterDirectContacts(){
-                
+            function filterDirectContacts(){   
                 $("#newContacts").html("");
                 filter = $("#searchBox").val().toUpperCase();
                 for(var i =0; i < listOfContacts.length; i++){
@@ -265,7 +274,57 @@
                 console.log(directMessages);
                 appendDirectContact(newDirectContact);
                 //TO DO API CALL 
+
+                //reload search for contacts
+                filterDirectContacts();
             }
+
+            //GROUP ADD
+            function hideGroupDropdown(){
+                $("#addButton").html("new group")             
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(showGroupDropdown);
+                $("#groupDropdown").hide();
+            }
+
+            function showGroupDropdown(){
+                $("#addButton").html("hide");
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(hideGroupDropdown);
+                 $("#groupDropdown").show();
+            }
+
+            function createGroupChat(){
+                let name = $("#groupNameInput").val();
+                let id = createUniqueGroupID();
+                let group = {id: id, name: name, numUndreadMessages: 0, messages: {}}
+            }
+
+            function addContactToGroup(){
+                //todo
+            }
+
+            function createUniqueGroupID(){
+                let lastID = groupMessages[groupMessages.length -1];
+                let newID = lastID + 1;
+                let unique = false;
+                while (!unique){
+                    for(var i = 0; i < groupMessages.length; i++){
+                        if(groupMessages[i].id == newID){
+                            newID += 1;
+                            unique = false
+                        }
+                    }
+                    unique = true;
+                }
+                return newID;
+            }
+
+
+
+
 
 
 
@@ -322,6 +381,10 @@
                 border: 2px solid black;
                 width: 100%;
             }
+            #groupDropdown{
+                display: none;
+                overflow: auto;
+            }
         </style>
     </head>
     
@@ -350,12 +413,16 @@
                         <!-- list of chats-->
                         <div class = "text-center">
                             <div id = "contactsList" class="list-group rounded-0"></div>
-                            <!--add button-->
+                            <!--add direct contact button-->
                             <button id  = "addButton" class="btn btn-success rounded-0 w-100" onclick = "showContactDropdown()">+</button>
                             <div id = "contactsDropdown" class = "dropdown">
                                 <input  id = "searchBox" type = "text" placeholder = "search" onkeyup="filterDirectContacts()">
                                 <div id = "newContacts">
                                 </div>
+                            </div>
+                            <div id = "groupDropdown" class = dropdown>
+                                <input  id = "groupNameInput" type = "text" placeholder = "enter group name">
+                                <button id = "createGroupButton" class = "btn btn-success rounded-0 w-100" onclick = "createGroupChat()">create group</button>
                             </div>
                         </div>
                     </div>
