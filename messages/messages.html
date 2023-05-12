@@ -1,0 +1,468 @@
+<html>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <script>
+            let directMessages = [{id: 01, name: "Sherlock Holmes",numUndreadMessages:10, messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
+                            {id: 02,name: "John Watson",numUndreadMessages:0, messages:[{isMyMessage:true, content:"I need help"}]}];
+            
+            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS", numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
+                                    {id: 02, name: "Holmes Homeeeesss", numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
+            
+            let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
+            let userID = 03;
+            let username = "Jim Moriarty";
+
+            //get new messages every so often
+            setInterval(getNewMessages, 5000);
+
+
+            $(document).ready(function(){
+                loadGroups();
+                loadContacts();
+                listDirectContacts();
+
+                $(document).on('keypress',function(e) {
+                    if(e.which == 13) {
+                        let message = $("#messageInput").val();
+                        let chatID = $("#messageInput").data("chatID");
+                        let isDirectMessage = $("#messageInput").data("isDirectMessage")
+                        $("#messageInput").val('');
+                        sendMessage(message, chatID, isDirectMessage);
+                    }
+                });
+            });
+
+            //periodic call to check for new messages
+            function getNewMessages(){
+                console.log("check");
+            }
+
+
+            //load data
+            function loadGroups(){
+                //TODO API CALL
+            }
+
+            //load all contacts
+            function loadContacts(){
+                //TODO API CALL
+            }
+
+            //send entered message to the recipant
+            function sendMessage(message, chatID, isDirectMessage){
+                console.log(message +  " | " )
+                if(message != ""){
+                    if(isDirectMessage){
+                        showDirectMessage(message, true);
+                    }
+                    else{
+                        showGroupMessage(message, username);
+                    }
+                    addMessage(message,chatID, isDirectMessage, true);
+                    saveMessage(message, chatID, isDirectMessage);
+                    
+                }
+                console.log(directMessages + " | " + chatID);
+            }  
+            //add message to the variables
+            function addMessage(message, chatID, isDirectMessage, isMyMessage){
+                //console.log(chatID);
+                if(isDirectMessage){
+                    for(let i =0; i < directMessages.length; i++ ){
+                        if (directMessages[i].id == chatID){
+                            directMessages[i].messages.push({isMyMessage: true, content: message})
+                        }
+                    }
+                }
+                else{
+                    for(let i =0; i < groupMessages.length; i++ ){
+                        if (groupMessages[i].id == chatID){
+                            groupMessages[i].messages.push({sender: username, content: message})
+                        }
+                    }
+                }
+            }
+
+            function saveMessage(){
+                //TODO API CALL
+            }
+
+            //SIDEBAR FUNCTIONS
+            //clear contacts
+            function clearContacts(){
+                $("#contactsList").empty();
+            };
+            //load the lsit of direct messages
+            function listDirectContacts(){
+                clearContacts();   
+                hideGroupDropdown(); 
+                hideContactDropdown();
+                for(let i = 0; i < directMessages.length; i++  ){
+                    appendDirectContact(directMessages[i]);
+                }
+                
+            }
+            //append one contact to the side bar 
+            function appendDirectContact(contact){
+                let html = "<button id = 'direct_contact_" + contact.id + "' class='list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3' onclick = 'switchDirectChat(this)'>\
+                            <div class='ms-2 me-auto'>\
+                                <div class='fw-bold'>" +
+                                    contact.name +
+                                "</div>\
+                            </div>";
+                            if (contact.numUndreadMessages != 0){
+                              html += "<span class='badge bg-primary rounded-pill'>" + contact.numUndreadMessages + "</span>"
+                            }
+                html += "</button>";
+                $("#contactsList").append(html);
+            }
+
+            //load the list of groups
+            function listGroupContacts(){
+                clearContacts();
+                hideContactDropdown();
+                hideGroupDropdown();
+
+                for(let i = 0; i < groupMessages.length; i++){
+                    appendGroupMessages(groupMessages[i])
+                }
+            }
+
+            //append one group messages to the side bar
+            function appendGroupMessages(group){
+                let html = "<button id = 'group_chat_" + group.id + "' class='list-group-item list-group-item-action d-flex justify-content-between align-items-start p-3' onclick = 'switchGroupChat(this)'>\
+                            <div class='ms-2 me-auto'>\
+                                <div class='fw-bold'>" +
+                                    group.name +
+                                "</div>\
+                            </div>";
+                            if (group.numUndreadMessages != 0){
+                              html += "<span class='badge bg-primary rounded-pill'>" + group.numUndreadMessages + "</span>"
+                            }
+                html += "</button>";
+                $("#contactsList").append(html);
+            }
+
+            //CHATBOX FUNCTIONS
+            //add a message to the chat box
+            function showDirectMessage(message, isMyMessage){
+                let html = ""
+                if(isMyMessage){
+                    html += "<div class = 'd-flex justify-content-end m-1'>\
+                    <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
+                }
+                else{
+                    html += "<div class = 'd-flex justify-content-start m-1'>\
+                    <span class = 'theirMessage rounded-pill p-3'>" + message +"</span>"
+                }
+                html += "\<div>"
+                $("#chatbox").append(html)
+            }
+            //clear chatbox
+            function clearChatbox(){
+                $("#chatbox").empty();
+            }
+            //clear chat and list direct messages 
+            function switchDirectChat(button){
+                //hide in this order to make button do the correct one
+                hideGroupDropdown();
+                hideContactDropdown();
+
+                clearChatbox();
+                let id = button.id.replace("direct_contact_", "");
+
+                //find contacts messages and display them
+                for(let i = 0; i < directMessages.length; i++){
+                    if(id == directMessages[i].id){
+                        listMessages(directMessages[i].messages,true);
+                        //clear 'notifications' and reload contacts
+                        directMessages[i].numUndreadMessages = 0;
+                        clearContacts();
+                        listDirectContacts();
+                        //change chat title
+                        $("#chatTitle").html(directMessages[i].name);
+                        //change input text data values
+                        $("#messageInput").data("chatID", directMessages[i].id);
+                        $("#messageInput").data("isDirectMessage", true);
+                    }
+                }
+            }
+            //clear chat and list group messages
+            function switchGroupChat(button){
+
+                hideContactDropdown();
+                hideGroupDropdown();
+
+                clearChatbox();
+                let id = button.id.replace("group_chat_","");
+                //find the groupChats
+                for( let i =0; i < groupMessages.length; i++){
+                    if(id  == groupMessages[i].id){
+                        listMessages(groupMessages[i].messages, false);
+                        //clear notifications and reload the chat
+                        groupMessages[i].numUndreadMessages = 0;
+                        clearContacts();
+                        listGroupContacts();
+                        //change chat title
+                        $("#chatTitle").html(groupMessages[i].name);
+                        //change input box data values
+                        $("#messageInput").data("chatID", groupMessages[i].id);
+                        $("#messageInput").data("isDirectMessage", false);
+                    }
+                }
+            }
+            //iterate over mesages and add them
+            function listMessages(messages, isDirect){
+                for(let i = 0; i < messages.length; i++){
+                    if (isDirect){
+                        showDirectMessage(messages[i].content, messages[i].isMyMessage);
+                    }
+                    else{
+                        showGroupMessage(messages[i].content, messages[i].sender)
+                    }
+                }
+            }
+            //show group message
+            function showGroupMessage(message, sender){
+                //own message
+                let html = "";
+                if(sender == username){
+                    html += "<div class = 'd-flex justify-content-end m-1'>\
+                        <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
+                }
+                else{
+                    html += "<div class = 'd-flex justify-content-start m-1'>\
+                    <span class = 'theirMessage rounded-pill p-3'><p class = 'nameTag m-0'>"+sender+ "</p>" + message +"</span>"
+                }
+                html += "\<div>";
+                $("#chatbox").append(html)
+            }
+            function showContactDropdown(){
+                $("#addButton").html("hide");
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(hideContactDropdown);
+                $("#contactsDropdown").show();
+    
+            }
+            function hideContactDropdown(){
+                $("#addButton").html("+");
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(showContactDropdown);
+                $("#contactsDropdown").hide();
+
+            }
+
+            function filterDirectContacts(){   
+                $("#newContacts").html("");
+                filter = $("#searchBox").val().toUpperCase();
+                for(var i =0; i < listOfContacts.length; i++){
+                    let name = listOfContacts[i].name;
+                    let id = listOfContacts[i].id;
+                    var used = false;
+                    for(var j = 0; j < directMessages.length; j++){
+                        if (name.toUpperCase() == directMessages[j].name.toUpperCase()){
+                            used = true;
+                        }
+                    }
+                    if (used){
+                        continue;
+                    }
+                    else if(name.indexOf(filter) > -1){
+                        let html = "<button class = 'contact p-2' data-contact-id = '" +id+ "' onclick = 'createDirectChat(this)'>" + name + "</button>"
+                        $("#newContacts").append(html);
+                    }
+                }
+            }
+
+            //creates a new direct chat
+            function  createDirectChat(button){
+                let id = button.getAttribute("data-contact-id");
+                let name = button.innerText;
+                let newDirectContact = {id : +id, name: name,numUndreadMessages: 0,messages:[]}
+                directMessages.push(newDirectContact);
+                console.log(directMessages);
+                appendDirectContact(newDirectContact);
+                //not doing an api call here to save the chat becuase it should save when you send a messge and theres no point saving an empty chat
+
+                //reload search for contacts
+                filterDirectContacts();
+            }
+
+            //GROUP ADD
+            function hideGroupDropdown(){
+                $("#addButton").html("new group")             
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(showGroupDropdown);
+                $("#groupDropdown").hide();
+            }
+
+            function showGroupDropdown(){
+                $("#addButton").html("hide");
+                $('#addButton').attr('onclick', '');
+                $('#addButton').unbind('click');
+                $("#addButton").click(hideGroupDropdown);
+                 $("#groupDropdown").show();
+            }
+
+            function createGroupChat(){
+                let name = $("#groupNameInput").val();
+                let id = createUniqueGroupID();
+                let group = {id: id, name: name, numUndreadMessages: 0, messages: []}
+
+                groupMessages.push(group);
+                listGroupContacts();
+                saveGroup(group);
+
+            }
+
+            function addContactToGroup(){
+                //todo
+            }
+
+            function createUniqueGroupID(){
+                let lastID = groupMessages[groupMessages.length -1];
+                let newID = lastID + 1;
+                let unique = false;
+                while (!unique){
+                    for(var i = 0; i < groupMessages.length; i++){
+                        if(groupMessages[i].id == newID){
+                            newID += 1;
+                            unique = false
+                        }
+                    }
+                    unique = true;
+                }
+                return newID;
+            }
+
+            function saveGroup(group){
+                //TODO API CALL
+            }
+
+
+
+
+
+
+
+
+        </script>
+
+        <style>
+            .container-fluid{
+                padding: 0 !important;
+            }
+            .header{
+                background-color: rgb(62, 0, 103);
+            }
+            h1{
+                color:white;
+            }
+            .chatborder{
+                background-color: rgb(62, 0, 103);
+                border: white;
+            }
+            #messages{
+                overflow-x: hidden !important;
+                overflow-y: auto;
+                background-color: white;
+            }
+            .myMessage{
+                background-color: lightblue;
+                align-self: self-end;
+            }
+            .theirMessage{
+                background-color: grey;
+            }
+            .message{
+                max-width: 60%;
+            }
+            #chatTitle{
+                background-color: rgb(62, 0, 103);
+                color: white;
+                font-weight: bold;
+            }
+            .nameTag{
+                font-weight:bold;
+            }
+            #contactsDropdown{
+                display: none;
+                overflow: auto;
+                
+            }
+            .contact{
+                display: block;
+                text-decoration: none;
+                background-color: rgb(62, 0, 103);
+                color: white;
+                border: 2px solid black;
+                width: 100%;
+            }
+            #groupDropdown{
+                display: none;
+                overflow: auto;
+            }
+        </style>
+    </head>
+    
+    <body class = "d-flex flex-column h-100" style = "background-color: white;">
+        <header class = "header px-4 py-1 text-center">
+            <h1> Message Subsystem </h1>
+        </header>
+        <div class="container-fluid d-flex flex-grow-1">
+            <div class="row flex-grow-1 flex-column flex-sm-row g-0">
+                <!-- chat selection-->
+                <div class="col-sm-3 sidebar flex-shrink-1">
+                    <div class="">
+                        <!-- group and direct buttons-->
+                        <div class="d-flex bd-highlight">
+                            <div class="flex-fill bd-highlight text-center">
+                                <button class="btn border border-white btn-primary rounded-0 w-100" onclick= "listDirectContacts()">
+                                    Direct
+                                </button>
+                            </div>
+                            <div class="flex-fill bd-highlight text-center">
+                                <button class="btn border border-white btn-primary rounded-0 w-100" onclick= "listGroupContacts()">
+                                    Group
+                                </button>
+                            </div>
+                        </div>
+                        <!-- list of chats-->
+                        <div class = "text-center">
+                            <div id = "contactsList" class="list-group rounded-0"></div>
+                            <!--add direct contact button-->
+                            <button id  = "addButton" class="btn btn-success rounded-0 w-100" onclick = "showContactDropdown()">+</button>
+                            <div id = "contactsDropdown" class = "dropdown">
+                                <input  id = "searchBox" type = "text" placeholder = "search" onkeyup="filterDirectContacts()">
+                                <div id = "newContacts">
+                                </div>
+                            </div>
+                            <div id = "groupDropdown" class = dropdown>
+                                <input  id = "groupNameInput" type = "text" placeholder = "enter group name">
+                                <button id = "createGroupButton" class = "btn btn-success rounded-0 w-100" onclick = "createGroupChat()">create group</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- chat -->
+                <div id = "messages" class="col-sm-9 d-flex flex-column  pb-2">
+                    <h3  id = "chatTitle" class = " border-top border-white text-center p-3">chat box</h3>
+                    <div id = "chatbox" class = "d-flex flex-column">
+                        
+                    </div>
+                    <!-- message input-->
+                    <div class = "row p-3 m" style = "margin-top:auto">
+                        <input type="text" id ="messageInput" class = "p-3 m-0 rounded-2" placeholder="enter Message" data-chatID = "-1" data-isDirectMessage = "true">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
