@@ -24,7 +24,7 @@ model User {
 model Message {
   id          Int      @id @default(autoincrement())
   senderID    Int
-  recipientID Int
+  recipientID Int //?
 // groupID     Int?
   dateTime    DateTime @default(now())
   content     String
