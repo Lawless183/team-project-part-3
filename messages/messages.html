@@ -40,6 +40,7 @@
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
+                console.log(message +  " | " )
                 if(message != ""){
                     if(isDirectMessage){
                     showDirectMessage(message, true);
@@ -55,7 +56,7 @@
             }  
             //add message to the variables
             function addMessage(message, chatID, isDirectMessage, isMyMessage){
-                console.log(chatID);
+                //console.log(chatID);
                 if(isDirectMessage){
                     for(let i =0; i < directMessages.length; i++ ){
                         if (directMessages[i].id == chatID){
@@ -66,7 +67,7 @@
                 else{
                     for(let i =0; i < groupMessages.length; i++ ){
                         if (groupMessages[i].id == chatID){
-                            groupMessages[i].messages.push({contactName: username, content: message})
+                            groupMessages[i].messages.push({sender: username, content: message})
                         }
                     }
                 }
@@ -184,7 +185,7 @@
 
                 clearChatbox();
                 let id = button.id.replace("group_chat_","");
-                //find the groupChat
+                //find the groupChats
                 for( let i =0; i < groupMessages.length; i++){
                     if(id  == groupMessages[i].id){
                         listMessages(groupMessages[i].messages, false);
@@ -299,7 +300,11 @@
             function createGroupChat(){
                 let name = $("#groupNameInput").val();
                 let id = createUniqueGroupID();
-                let group = {id: id, name: name, numUndreadMessages: 0, messages: {}}
+                let group = {id: id, name: name, numUndreadMessages: 0, messages: []}
+
+                groupMessages.push(group);
+                listGroupContacts();
+
             }
 
             function addContactToGroup(){
