@@ -34,11 +34,10 @@
 
             //periodic call to check for new messages
             function getNewMessages(){
-                console.log("check");
                 $.post({url: "/messages",
                         data: {userID: userID, time: Date.now()},
                         success: function(result){
-                            console.lo("saved direct message");
+                            console.log("saved direct message");
                         }
                     });
             }
@@ -77,7 +76,6 @@
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
-                console.log(message +  " | " )
                 if(message != ""){
                     if(isDirectMessage){
                         showDirectMessage(message, true);
@@ -89,7 +87,6 @@
                     saveMessage(message, chatID, isDirectMessage);
                     
                 }
-                console.log(directMessages + " | " + chatID);
             }  
             //add message to the variables
             function addMessage(message, chatID, isDirectMessage, isMyMessage){
@@ -114,7 +111,7 @@
                     $.post({url: "/messages",
                         data: {senderID: userID, recipientID: id, message: message},
                         success: function(result){
-                            console.lo("saved direct message");
+                            console.log("saved direct message");
                         }
                     });
                 }
@@ -122,7 +119,7 @@
                     $.post({url: "/messages",
                         data: {senderID: userID, chatID: id, message: message},
                         success: function(result){
-                            console.lo("saved group message");
+                            console.log("saved group message");
                         }
                     });
                 }
@@ -320,7 +317,6 @@
                 let name = button.innerText;
                 let newDirectContact = {id : +id, name: name,numUndreadMessages: 0,messages:[]}
                 directMessages.push(newDirectContact);
-                console.log(directMessages);
                 appendDirectContact(newDirectContact);
                 //not doing an api call here to save the chat becuase it should save when you send a messge and theres no point saving an empty chat
 
