@@ -5,7 +5,8 @@ import { group } from 'console';
 const router = express.Router();
 
 router.get('/messages', async (req, res) => {
-  const {userID, groupID} = req.body;
+  const userID = 1;
+  // const {userID, groupID} = req.body;
   const messages = await prisma.message.findMany({
     where: {
       OR: [
@@ -29,7 +30,8 @@ router.get('/messages', async (req, res) => {
 });
 
 router.get('/group', async (req, res) => {
-  const userID = req.body;
+  // const userID = req.body;
+  const userID = 1;
   const groupChats = await prisma.group.findMany({
     where: {
       users: {
