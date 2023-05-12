@@ -13,8 +13,13 @@
             let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
             let userID = 03;
             let username = "Jim Moriarty";
+
+            //get new messages every so often
+            setInterval(getNewMessages, 5000);
+
+
             $(document).ready(function(){
-                loadMessages();
+                loadGroups();
                 loadContacts();
                 listDirectContacts();
 
@@ -28,8 +33,15 @@
                     }
                 });
             });
+
+            //periodic call to check for new messages
+            function getNewMessages(){
+                console.log("check");
+            }
+
+
             //load data
-            function loadMessages(){
+            function loadGroups(){
                 //TODO API CALL
             }
 
@@ -43,14 +55,14 @@
                 console.log(message +  " | " )
                 if(message != ""){
                     if(isDirectMessage){
-                    showDirectMessage(message, true);
+                        showDirectMessage(message, true);
                     }
                     else{
                         showGroupMessage(message, username);
                     }
                     addMessage(message,chatID, isDirectMessage, true);
-                    saveMessage();
-                    //TODO API CALL
+                    saveMessage(message, chatID, isDirectMessage);
+                    
                 }
                 console.log(directMessages + " | " + chatID);
             }  
@@ -274,7 +286,7 @@
                 directMessages.push(newDirectContact);
                 console.log(directMessages);
                 appendDirectContact(newDirectContact);
-                //TO DO API CALL 
+                //not doing an api call here to save the chat becuase it should save when you send a messge and theres no point saving an empty chat
 
                 //reload search for contacts
                 filterDirectContacts();
@@ -304,6 +316,7 @@
 
                 groupMessages.push(group);
                 listGroupContacts();
+                saveGroup(group);
 
             }
 
@@ -325,6 +338,10 @@
                     unique = true;
                 }
                 return newID;
+            }
+
+            function saveGroup(group){
+                //TODO API CALL
             }
 
 
