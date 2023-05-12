@@ -16,13 +16,10 @@
 
             //get new messages every so often
             setInterval(getNewMessages, 5000);
-
-
             $(document).ready(function(){
                 loadGroups();
                 loadContacts();
                 listDirectContacts();
-
                 $(document).on('keypress',function(e) {
                     if(e.which == 13) {
                         let message = $("#messageInput").val();
@@ -39,7 +36,6 @@
                 console.log("check");
 
             }
-
 
             //load data
             function loadGroups(){
@@ -108,7 +104,6 @@
                 for(let i = 0; i < directMessages.length; i++  ){
                     appendDirectContact(directMessages[i]);
                 }
-                
             }
             //append one contact to the side bar 
             function appendDirectContact(contact){
@@ -197,10 +192,8 @@
             }
             //clear chat and list group messages
             function switchGroupChat(button){
-
                 hideContactDropdown();
                 hideGroupDropdown();
-
                 clearChatbox();
                 let id = button.id.replace("group_chat_","");
                 //find the groupChats
@@ -327,7 +320,7 @@
             }
 
             function addContactToGroup(){
-                //todo
+                //TODO
             }
 
             function saveContactToGroup(){
@@ -355,16 +348,7 @@
                 //TODO API CALL
                 //give group id, name
             }
-
-
-
-
-
-
-
-
         </script>
-
         <style>
             .container-fluid{
                 padding: 0 !important;
