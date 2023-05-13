@@ -37,7 +37,6 @@ model Group {
   id       Int    @id @default(autoincrement())
   name     String
   users    User[]
-  messages Message[]?
 }
 
 model Project {
