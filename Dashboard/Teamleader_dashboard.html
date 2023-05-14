@@ -98,7 +98,7 @@
                                 footer.setAttribute("class", "btn btn-secondary");
                                 footer.setAttribute("data-bs-toggle", "modal");
                                 footer.setAttribute("data-bs-target", "#exampleModalPopovers");
-                                footer.innerHTML = "View Projects";
+                                footer.innerHTML = "View Project";
                                 footer.addEventListener("click", () => {
                                     for (const j in projects[i].tasks){
                                     const taskCardWrap = document.createElement('div');
@@ -198,34 +198,6 @@
                                   hoverOffset: 4
                                     }]
                                   }
-                            });
-                            new Chart("myChart3", {
-                            type: "horizontalBar",
-                            data: {
-                                labels: [
-                                    'In progress',
-                                    'Completed',
-                                    'To-do'
-                                ],
-                                datasets: [{
-                                    data: [3,4,5],
-                                    backgroundColor: [
-                                    'rgb(255, 99, 132)',
-                                    'rgb(0, 255, 0)',
-                                    'rgb(54, 162, 235)'
-                                    
-                                    ]
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    xAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
                             });
                         </script>
                     </div>
