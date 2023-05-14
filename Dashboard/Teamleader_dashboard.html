@@ -40,7 +40,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" id="modalTaskContainer">
                                         <div class="card text-dark bg-info mb-3">
                                             <div class="card-body">
                                                 <p class="card-text">
@@ -74,7 +74,6 @@
                     <div class="col-md-4" id="graph-container">
                         <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
                         <canvas id="myChart2" style="width:100%;max-width:700px"></canvas>
-                        <canvas id="myChart3" style="width:100%;max-width:700px"></canvas>
 
                         <script>
 
@@ -83,8 +82,12 @@
                             const data = await response.json();
                             console.log(data);
 
+                            const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
+                            const tasks = await taskResponse.json();
+                            console.log(tasks);
+
                             const cardContainer = document.getElementById('card-container');
-                            const barGraph = document.getElementById('myChart3');
+                            const modalTaskContainer = document.getElementById("modalTaskContainer");
 
                             for (const i in data) {
                                 const cardWrap = document.createElement('div');
@@ -107,16 +110,46 @@
                                 footer.setAttribute("data-bs-toggle", "modal");
                                 footer.setAttribute("data-bs-target", "#exampleModalPopovers");
                                 footer.innerHTML = "View Projects";
-                                
+                                footer.addEventListener("click", () => {
+                                    for (const j in data[i].tasks){
+                                    const taskCardWrap = document.createElement('div');
+                                    taskCardWrap.classList.add("col-md-12");
+
+                                    const taskCard = document.createElement("div");
+                                    taskCard.classList.add('card', 'text-black', 'bg-info', 'mb-3');
+
+                                    const taskHeader = document.createElement("h5");
+                                    taskHeader.classList.add("card-header");
+                                    taskHeader.innerText = data[i].tasks[j].description;
+
+                                    const taskBody = document.createElement("h5");
+                                    taskBody.classList.add("card-body");
+                                    taskBody.innerText = "Task Status: " + data[i].tasks[j].status;
+
+                                    const taskFooter = document.createElement("h5");
+                                    taskFooter.classList.add('card-footer');
+                                    taskFooter.innerText = "Deadline: " + data[i].tasks[j].deadline;
+
+                                    taskCard.appendChild(taskHeader);
+                                    taskCard.appendChild(taskBody);
+                                    taskCard.appendChild(taskFooter);
+                                    taskCardWrap.appendChild(taskCard);
+                                    modalTaskContainer.appendChild(taskCardWrap);
+                                    }
+                                });
                                 
                                 card.appendChild(header);
                                 card.appendChild(body);
-                                card.appendChild(barGraph);
                                 card.appendChild(footer);
                                 cardWrap.appendChild(card);
                                 cardContainer.appendChild(cardWrap);
                                 
                             }
+                            const modal = document.getElementById("exampleModalPopovers");
+                            modal.addEventListener("hidden.bs.modal", () => {
+                                console.log("closed");
+                                modalTaskContainer.innerHTML = "";
+                            })
                         })();
 
                         new Chart("myChart", {
