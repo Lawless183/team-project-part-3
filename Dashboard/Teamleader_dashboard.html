@@ -68,11 +68,11 @@
                         <script>
 
                         (async () => {
-                            const response = await fetch("http://localhost:3000/analyse/user/2/projects");
+                            const response = await fetch("http://localhost:3000/analyse/user/3/projects");
                             const projects = await response.json();
                             console.log(projects);
 
-                            const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
+                            const taskResponse = await fetch("http://localhost:3000/analyse/user/3/tasks");
                             const tasks = await taskResponse.json();
                             console.log(tasks);
 
