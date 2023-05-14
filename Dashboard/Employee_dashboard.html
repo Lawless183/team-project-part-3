@@ -78,24 +78,23 @@
                         </div>
                     </div>
                     <div class="col-md-4" id="graph-container">
-                        <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-                        <canvas id="lineChart" style="width:100%;max-width:700px"></canvas>
+                        <canvas id="progressChart" style="width:100%;max-width:700px"></canvas>
+                        <canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>
+                        <!-- <canvas id="lineChart" style="width:100%;max-width:700px"></canvas> -->
 
                         <script>
 
                         (async () => {
                             const response = await fetch("http://localhost:3000/analyse/user/2/projects");
-                            const data = await response.json();
-                            console.log(data);
+                            const projects = await response.json();
 
                             const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
                             const tasks = await taskResponse.json();
-                            console.log(tasks);
 
                             const cardContainer = document.getElementById('card-container');
                             const modalContainer = document.getElementById("modal-container");
 
-                            for (const i in data) {
+                            for (const i in projects) {
                                 const cardWrap = document.createElement('div');
                                 cardWrap.classList.add('col-md-4');
 
@@ -104,11 +103,11 @@
 
                                 const header = document.createElement('h5');
                                 header.classList.add('card-header');
-                                header.innerText = data[i].name;
+                                header.innerText = projects[i].name;
 
                                 const body = document.createElement('h5');
                                 body.classList.add('card-body');
-                                body.innerText = "Deadline: " + data[i].deadline;
+                                body.innerText = "Deadline: " + projects[i].deadline;
 
                                 const footer = document.createElement('button');
                                 footer.classList.add('card-footer');
@@ -117,7 +116,7 @@
                                 footer.setAttribute("data-bs-target", "#exampleModalPopovers");
                                 footer.innerHTML = "View Projects";
                                 footer.addEventListener("click", () => {
-                                    for (const j in data[i].tasks){
+                                    for (const j in projects[i].tasks){
                                     const taskCardWrap = document.createElement('div');
                                     taskCardWrap.classList.add("col-md-12");
 
@@ -126,12 +125,12 @@
 
                                     const taskHeader = document.createElement("h5");
                                     taskHeader.classList.add("card-header");
-                                    taskHeader.innerText = data[i].tasks[j].description;
+                                    taskHeader.innerText = projects[i].tasks[j].description;
 
                                     const taskBody = document.createElement("h5");
                                     taskBody.classList.add("card-body");
-                                    taskBody.innerText = data[i].tasks[j].deadline;
-                                    taskBody.innerText = data[i].tasks[j].status;
+                                    taskBody.innerText = projects[i].tasks[j].deadline;
+                                    taskBody.innerText = projects[i].tasks[j].status;
 
                                     taskCard.appendChild(taskHeader);
                                     taskCard.appendChild(taskBody);
@@ -152,65 +151,48 @@
                             modal.addEventListener("hidden.bs.modal", () => {
                                 console.log("closed");
                                 modalContainer.innerHTML = "";
-                            })
+                            });
 
+                            new Chart("progressChart", {
+                                type: "doughnut",
+                                data: {
+                                    labels: [
+                                        'To Do',
+                                        'Ongoing',
+                                        'Completed'
+                                    ],
+                                    datasets: [{
+                                        label: 'Task Statuses',
+                                        data: [tasks.taskData.todo, tasks.taskData.ongoing, tasks.taskData.completed],
+                                        backgroundColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(0, 255, 0)',
+                                            'rgb(255, 205, 86)'
+                                        ],
+                                        hoverOffset: 4
+                                    }]
+                                }
+                            });
 
-                            // <div class="col-md-4">
-                            //     <div class="card">
-                            //         <h5 class="card-header">
-                            //             Card title
-                            //         </h5>
-                            //         <div class="card-body">
-                            //             <p class="card-text">
-                            //                 Card content
-                            //             </p>
-                            //         </div>
-                            //         <div class="card-footer">
-                            //             Card footer
-                            //         </div>
-                            //     </div>
-                            // </div>
+                            new Chart("categoryChart", {
+                                type: "bar",
+                                data: {
+                                    labels: Object.keys(tasks.categoryData),
+                                    datasets: [{
+                                        label: 'Task Statuses',
+                                        data: Object.values(tasks.categoryData),
+                                        backgroundColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(0, 255, 0)',
+                                            'rgb(255, 205, 86)'
+                                        ],
+                                        hoverOffset: 4
+                                    }]
+                                }
+                            });
+
 
                         })();
-
-                        new Chart("myChart", {
-                          type: "doughnut",
-                          data: {
-                            labels: [
-                                'To Do',
-                                'Completed',
-                                'Ongoing'
-                            ],
-                            datasets: [{
-                              label: 'Task Statuses',
-                              data: [300, 50, 100],
-                              backgroundColor: [
-                                'rgb(255, 99, 132)',
-                                'rgb(0, 255, 0)',
-                                'rgb(255, 205, 86)'
-                              ],
-                              hoverOffset: 4
-                                }]
-                              }
-                        });
-
-                        const xValues = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                        const yValues = [7,8,8,9,9,9,1,2,4,4,5,6];
-
-                        new Chart("lineChart", {
-                            type: "line",
-                            data: {
-                                labels: xValues,
-                                datasets: [{
-                                    label: "Improvement Score (1-10)",
-                                    fill: false,
-                                    lineTension: 0.5,
-                                    backgroundColor: "rgba(0,0,255,1.0)",
-                                    borderColor: "rgba(0,0,255,0.1)",
-                                    data: yValues
-                                }]
-                            }
-                        });
 
                         </script>
                     </div>
