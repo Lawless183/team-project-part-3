@@ -29,14 +29,8 @@
                             </div>
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="jumbotron">
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: 33%" aria-valuenow=tasks.taskData.todo aria-valuemin="0" aria-valuemax="100"></div>
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 33%" aria-valuenow=tasks.taskData.ongoing aria-valuemin="0" aria-valuemax="100"></div>
-                                                <div class="progress-bar bg-info" role="progressbar" style="width: 33%" aria-valuenow=tasks.taskData.completed aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                    <div class="col-md-12" id="progressBar">
+                                        
                                     </div>
                                 </div>
                                 <div class="row">
@@ -100,6 +94,26 @@
                                 footer.setAttribute("data-bs-target", "#exampleModalPopovers");
                                 footer.innerHTML = "View Project";
                                 footer.addEventListener("click", () => {
+
+                                    if (projects[i].teamLeaderID == 3) {
+
+                                        const progressBar = document.getElementById('progressBar');
+                                        progressBar.innerHTML = `
+                                        <div class="jumbotron">
+                                            <div class="progress">
+                                                <div class="progress-bar bg-danger" id="progressTodo" role="progressbar" aria-valuenow=tasks.taskData.todo aria-valuemin="0" aria-valuemax="100""></div>
+                                                <div class="progress-bar bg-warning" id="progressOngoing" role="progressbar" aria-valuenow=tasks.taskData.ongoing aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="progress-bar bg-info" id="progressCompleted" role="progressbar" aria-valuenow=tasks.taskData.completed aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                        `;
+
+                                        document.getElementById('progressTodo').style.width = `${(projects[i].taskData.todo * 100) / projects[i].tasks.length}%`;
+                                        document.getElementById('progressOngoing').style.width = `${(projects[i].taskData.ongoing * 100) / projects[i].tasks.length}%`;
+                                        document.getElementById('progressCompleted').style.width = `${(projects[i].taskData.completed * 100) / projects[i].tasks.length}%`;
+
+                                    }
+
                                     for (const j in projects[i].tasks){
                                     const taskCardWrap = document.createElement('div');
                                     taskCardWrap.classList.add("col-md-12");
@@ -200,13 +214,9 @@
                             }
                             const modal = document.getElementById("exampleModalPopovers");
                             modal.addEventListener("hidden.bs.modal", () => {
-                                console.log("closed");
                                 modalTaskContainer.innerHTML = "";
-                            })
-                            const modal2 = document.getElementById("exampleModalPopovers");
-                            modal.addEventListener("hidden.bs.modal", () => {
-                                console.log("closed");
                                 modalUserContainer.innerHTML = "";
+                                document.getElementById('progressBar').innerHTML = '';
                             })
 
                             new Chart("progressChart", {
