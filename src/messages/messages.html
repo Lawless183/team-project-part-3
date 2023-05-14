@@ -14,10 +14,8 @@
             let userID = 3;
 
             $(document).ready(function(){
-                loadGroups();
                 loadContacts();
-                //loadMessages()
-                listDirectContacts();
+                loadGroups();
                 $(document).on('keypress',function(e) {
                     if(e.which == 13) {
                         let message = $("#messageInput").val();
@@ -34,7 +32,7 @@
                 $.get({url: url +"group/" + userID,
                         data: userID,
                         success: function(result){
-                            console.log("loaded groups");
+                            console.log("loaded groups:");
                             //console.log(result);
                             groupMessages = result;
                         }
@@ -46,29 +44,40 @@
                 ///messages/:userID/:groupID
                 $.get({url: url + "messages/"+ userID +"/-1",
                         success: function(result){
-                            console.log("loaded contacts");
-                            console.log(result);
-                            for(var i = 0; i < result[1].length; i++){
-                                listOfContacts.push({id: result[1][i][1],name: result[1][i][0]});
-                            }
-                            console.log(listOfContacts);
-                        }
-                });
-            }
-            
 
-            /*load messages
-            function loadMessages(){
-                //TODO API CALL get [{id, name, messages: [{isMyMessage, content}]}]; 
-                $.post({url: url,
-                        data: userID,
-                        success: function(result){
-                            console.log("loaded messages");
-                            //directMessages = JSON.parse(result)
+                            //fill  contact list
+                            let contacts = result[1]
+                            for(var i = 0; i < contacts.length; i++){
+                                listOfContacts.push({id: contacts[i][1],name: contacts[i][0]});
+                            }
+                            console.log("loaded contacts:");
+                            //console.log(listOfContacts);
+
+                            
+                            //fill message list
+                            let messages = result[0]
+                            directMessages = []
+                            for(var i = 0; i < result[0].length; i ++){
+                                let content = messages[i][0]
+                                let senderID = messages[i][1]
+                                let recipientID = messages[i][2]
+                                let isMyMessage = false;
+                                let contactID = senderID;
+                                if(senderID == userID){
+                                    isMyMessage = true;
+                                    contactID = recipientID
+                                }
+
+                                //go through direct messages and append message
+                                addMessage(content, contactID, true, isMyMessage);
+                            }
+                            console.log("direct messgaes:")
+                            //console.log(directMessages);
+
+                            listDirectContacts();
                         }
                 });
             }
-            */
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
@@ -87,10 +96,21 @@
             //add message to the variables
             function addMessage(message, chatID, isDirectMessage, isMyMessage){
                 if(isDirectMessage){
+                    let added = false
                     for(let i =0; i < directMessages.length; i++ ){
                         if (directMessages[i].id == chatID){
-                            directMessages[i].messages.push({isMyMessage: true, content: message})
+                            directMessages[i].messages.push({isMyMessage: isMyMessage, content: message})
+                            added = true;
                         }
+                    }
+                    if (added == false){
+                        let name = "";
+                        for(var i = 0; i < listOfContacts.length; i++){
+                            if (listOfContacts[i].id == chatID){
+                                name = listOfContacts[i].name
+                            }
+                        }
+                        directMessages.push({id: chatID, name: name, messages:[{isMyMessage: isMyMessage, content: message}]})
                     }
                 }
                 else{
@@ -281,7 +301,7 @@
 
             function filterDirectContacts(){   
                 $("#newContacts").html("");
-                filter = $("#newContacts").val().toUpperCase();
+                filter = $("#searchBox").val().toUpperCase();
                 for(var i =0; i < listOfContacts.length; i++){
                     let name = listOfContacts[i].name;
                     let id = listOfContacts[i].id;
@@ -295,6 +315,7 @@
                         continue;
                     }
                     else if(name.indexOf(filter) > -1){
+
                         let html = "<button class = 'contact p-2' data-contact-id = '" +id+ "' onclick = 'createDirectChat(this)'>" + name + "</button>"
                         $("#newContacts").append(html);
                     }

@@ -4,7 +4,7 @@ import { group } from 'console';
 
 const router = express.Router();
 
-//get direct messages or messages from a group
+//get direct messages or messages from a group and all contacts
 router.get('/messages/:userID/:groupID', async (req, res) => {
   const userID= Number(req.params.userID);
   var groupID = Number(req.params.groupID);
@@ -31,7 +31,7 @@ router.get('/messages/:userID/:groupID', async (req, res) => {
     }
   });
 
-  const messagesContent = messages.map((message) => message.content)
+  const messagesContent = messages.map((message) => [message.content, message.senderID, message.recipientID])
   const contactsMap = contacts.map((contact) => [contact.name, contact.id])
 
   res.json([messagesContent, contactsMap]);
