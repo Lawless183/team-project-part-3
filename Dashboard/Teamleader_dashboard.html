@@ -62,8 +62,8 @@
                         </div>
                     </div>
                     <div class="col-md-4" id="graph-container">
-                        <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
-                        <canvas id="myChart2" style="width:100%;max-width:700px"></canvas>
+                        <canvas id="progressChart" style="width:100%;max-width:700px"></canvas>
+                        <canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>
 
                         <script>
 
@@ -161,72 +161,47 @@
                                 console.log("closed");
                                 modalUserContainer.innerHTML = "";
                             })
-                        })();
 
-                        new Chart("myChart", {
-                          type: "pie",
-                          data: {
-                            labels: [
-                                'Completed',
-                                'In Progress'
-                            ],
-                            datasets: [{
-                              label: 'Task Statuses',
-                              data: [8,4],
-                              backgroundColor: [
-                                'rgb(0, 255, 0)',
-                                'rgb(255, 165, 0)'
-                              ],
-                              hoverOffset: 4
-                                }]
-                              }
-                        });
-                        new Chart("myChart2", {
-                            type: "pie",
-                              data: {
-                                labels: [
-                                    'Overdue Projects',
-                                    'Ontime Projects'
-                                ],
-                                datasets: [{
-                                  label: 'dataset',
-                                  data: [3, 5],
-                                  backgroundColor: [
-                                    'rgb(255, 99, 132)',
-                                    'rgb(54, 162, 235)'
-                                  ],
-                                  hoverOffset: 4
-                                    }]
-                                  }
-                            });
-                            new Chart("myChart3", {
-                            type: "horizontalBar",
-                            data: {
-                                labels: [
-                                    'In progress',
-                                    'Completed',
-                                    'To-do'
-                                ],
-                                datasets: [{
-                                    data: [3,4,5],
-                                    backgroundColor: [
-                                    'rgb(255, 99, 132)',
-                                    'rgb(0, 255, 0)',
-                                    'rgb(54, 162, 235)'
-                                    
-                                    ]
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    xAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
+                            new Chart("progressChart", {
+                                type: "doughnut",
+                                data: {
+                                    labels: [
+                                        'To Do',
+                                        'Ongoing',
+                                        'Completed'
+                                    ],
+                                    datasets: [{
+                                        label: 'Task Statuses',
+                                        data: [tasks.taskData.todo, tasks.taskData.ongoing, tasks.taskData.completed],
+                                        backgroundColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(0, 255, 0)',
+                                            'rgb(255, 205, 86)'
+                                        ],
+                                        hoverOffset: 4
                                     }]
                                 }
-                            }
                             });
+
+                            new Chart("categoryChart", {
+                                type: "bar",
+                                data: {
+                                    labels: Object.keys(tasks.categoryData),
+                                    datasets: [{
+                                        label: 'Task Statuses',
+                                        data: Object.values(tasks.categoryData),
+                                        backgroundColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(0, 255, 0)',
+                                            'rgb(255, 205, 86)'
+                                        ],
+                                        hoverOffset: 4
+                                    }]
+                                }
+                            });
+                        })();
+
+                        
                         </script>
                     </div>
                 </div>
