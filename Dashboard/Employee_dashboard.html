@@ -45,15 +45,14 @@
                     <div class="col-md-4" id="graph-container">
                         <canvas id="progressChart" style="width:100%;max-width:700px"></canvas>
                         <canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>
-                        <!-- <canvas id="lineChart" style="width:100%;max-width:700px"></canvas> -->
 
                         <script>
 
                         (async () => {
-                            const response = await fetch("http://localhost:3000/analyse/user/2/projects");
+                            const response = await fetch("http://localhost:3000/analyse/user/1/projects");
                             const projects = await response.json();
 
-                            const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
+                            const taskResponse = await fetch("http://localhost:3000/analyse/user/1/tasks");
                             const tasks = await taskResponse.json();
 
                             const cardContainer = document.getElementById('card-container');
