@@ -263,21 +263,27 @@
                         showDirectMessage(messages[i].content, messages[i].isMyMessage);
                     }
                     else{
-                        showGroupMessage(messages[i].content, messages[i].sender)
+                        showGroupMessage(messages[i].content, messages[i].senderID)
                     }
                 }
             }
             //show group message
-            function showGroupMessage(message, sender){
+            function showGroupMessage(message, senderID){
                 //own message
                 let html = "";
-                if(sender == username){
+                if(senderID == userID){
                     html += "<div class = 'd-flex justify-content-end m-1'>\
                         <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
                 }
                 else{
+                    let name = "unknown"
+                    for(var i = 0; i < listOfContacts.length; i++){
+                        if(listOfContacts[i].id == senderID){
+                            name = listOfContacts[i].name;
+                        }
+                    }
                     html += "<div class = 'd-flex justify-content-start m-1'>\
-                    <span class = 'theirMessage rounded-pill p-3'><p class = 'nameTag m-0'>"+sender+ "</p>" + message +"</span>"
+                    <span class = 'theirMessage rounded-pill p-3'><p class = 'nameTag m-0'>"+name+ "</p>" + message +"</span>"
                 }
                 html += "\<div>";
                 $("#chatbox").append(html)
@@ -315,7 +321,6 @@
                         continue;
                     }
                     else if(name.indexOf(filter) > -1){
-
                         let html = "<button class = 'contact p-2' data-contact-id = '" +id+ "' onclick = 'createDirectChat(this)'>" + name + "</button>"
                         $("#newContacts").append(html);
                     }
