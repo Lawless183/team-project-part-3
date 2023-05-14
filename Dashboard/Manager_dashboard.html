@@ -73,11 +73,9 @@
                         (async () => {
                             const response = await fetch("http://localhost:3000/analyse/user/2/projects");
                             const projects = await response.json();
-                            console.log(projects);
 
                             const taskResponse = await fetch("http://localhost:3000/analyse/user/2/tasks");
                             const tasks = await taskResponse.json();
-                            console.log(tasks);
 
                             const cardContainer = document.getElementById('card-container');
 
@@ -167,8 +165,8 @@
 
                                 let inProgress = false;
 
-                                for (const j in data[i].tasks) {
-                                    if (data[i].tasks[j] != 'COMPLETED') {
+                                for (const j in projects[i].tasks) {
+                                    if (projects[i].tasks[j] != 'COMPLETED') {
                                         incomplete = true;
                                         break;
                                     }
@@ -181,7 +179,7 @@
                                     completedData.completed++;
                                 }
 
-                                if (data[i].daysToDeadline < 0) {
+                                if (projects[i].daysToDeadline < 0) {
                                     overdueData.overdue++;
                                 }
                                 else {
@@ -199,7 +197,6 @@
                                 console.log("closed");
                                 modalUserContainer.innerHTML = "";
                             })
-                        })();
 
                             new Chart("completedGraph", {
                                 type: "pie",
@@ -238,7 +235,7 @@
                                     }]
                                 }
                             });
-                        
+                        })();
 
                         </script>
                     </div>

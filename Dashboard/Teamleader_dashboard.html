@@ -70,11 +70,9 @@
                         (async () => {
                             const response = await fetch("http://localhost:3000/analyse/user/3/projects");
                             const projects = await response.json();
-                            console.log(projects);
 
                             const taskResponse = await fetch("http://localhost:3000/analyse/user/3/tasks");
                             const tasks = await taskResponse.json();
-                            console.log(tasks);
 
                             const cardContainer = document.getElementById('card-container');
                             const modalTaskContainer = document.getElementById("modalTaskContainer");
