@@ -4,19 +4,16 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script>
-            let directMessages = [{id: 01, name: "Sherlock Holmes",numUndreadMessages:10, messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
-                            {id: 02,name: "John Watson",numUndreadMessages:0, messages:[{isMyMessage:true, content:"I need help"}]}];
+            let directMessages = [{id: 01, name: "Sherlock Holmes", messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
+                            {id: 02,name: "John Watson", messages:[{isMyMessage:true, content:"I need help"}]}];
             
-            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS",users: [01, 02, 03], numUndreadMessages: 1, messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
-                                    {id: 02, name: "Holmes Homeeeesss", users:[06, 01, 03],numUndreadMessages: 3, messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
+            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS",users: [01, 02, 03], messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
+                                    {id: 02, name: "Holmes Homeeeesss", users:[06, 01, 03], messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
             
             let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
             let userID = 03;
             let username = "Jim Moriarty";
 
-            //get new messages every so often
-            setInterval(getNewMessages, 5000);
-            setInterval(getNewGroupMessages, 5000);
             $(document).ready(function(){
                 loadGroups();
                 loadContacts();
@@ -33,31 +30,9 @@
                 });
             });
 
-            //periodic call to check for new messages
-            function getNewDirectMessages(){
-                $.post({url: "/messages",
-                        data: {userID: userID, time: Date.now()},
-                        success: function(result){
-                            console.log("got new direct message");
-                            let messages = JSON.parse(result);
-                        }
-                    });
-            }
-            function getNewGroupMessages(){
-                function getNewDirectMessages(){
-                $.post({url: "/messages",
-                        data: {userID: userID, time: Date.now()},
-                        success: function(result){
-                            console.log("got new weight message");
-                            let messages = JSON.parse(result);
-                        }
-                    });
-                }
-            }
-
             //load data
             function loadGroups(){
-                //TODO API call get [{id, name, numUnreadMessages, messages: [{sender, content}]}] with groups that given user id in
+                //TODO API call get [{id, name, messages: [{sender, content}]}] with groups that given user id in
                 $.post({url: "/messages",
                         data: userID,
                         success: function(result){
@@ -80,7 +55,7 @@
 
             //load messages
             function loadMessages(){
-                //TODO API CALL get [{id, name, numUnreadMessages, messages: [{isMyMessage, content}]}]; 
+                //TODO API CALL get [{id, name, messages: [{isMyMessage, content}]}]; 
                 $.post({url: "/messages",
                         data: userID,
                         success: function(result){
@@ -163,9 +138,6 @@
                                     contact.name +
                                 "</div>\
                             </div>";
-                            if (contact.numUndreadMessages != 0){
-                              html += "<span class='badge bg-primary rounded-pill'>" + contact.numUndreadMessages + "</span>"
-                            }
                 html += "</button>";
                 $("#contactsList").append(html);
             }
@@ -189,9 +161,6 @@
                                     group.name +
                                 "</div>\
                             </div>";
-                            if (group.numUndreadMessages != 0){
-                              html += "<span class='badge bg-primary rounded-pill'>" + group.numUndreadMessages + "</span>"
-                            }
                 html += "</button>";
                 $("#contactsList").append(html);
             }
@@ -229,7 +198,6 @@
                     if(id == directMessages[i].id){
                         listMessages(directMessages[i].messages,true);
                         //clear 'notifications' and reload contacts
-                        directMessages[i].numUndreadMessages = 0;
                         clearContacts();
                         listDirectContacts();
                         //change chat title
@@ -237,6 +205,7 @@
                         //change input text data values
                         $("#messageInput").data("chatID", directMessages[i].id);
                         $("#messageInput").data("isDirectMessage", true);
+                        setChatGroupID(-1);
                     }
                 }
             }
@@ -251,14 +220,14 @@
                     if(id  == groupMessages[i].id){
                         listMessages(groupMessages[i].messages, false);
                         //clear notifications and reload the chat
-                        groupMessages[i].numUndreadMessages = 0;
                         clearContacts();
                         listGroupContacts();
                         //change chat title
                         $("#chatTitle").html(groupMessages[i].name);
                         //change input box data values
-                        $("#messageInput").data("chatID", groupMessages[i].id);
+                        $("#messageInput").data("chatID", id);
                         $("#messageInput").data("isDirectMessage", false);
+                        setChatGroupID(id);
                     }
                 }
             }
@@ -307,7 +276,7 @@
 
             function filterDirectContacts(){   
                 $("#newContacts").html("");
-                filter = $("#searchBox").val().toUpperCase();
+                filter = $("#newContacts").val().toUpperCase();
                 for(var i =0; i < listOfContacts.length; i++){
                     let name = listOfContacts[i].name;
                     let id = listOfContacts[i].id;
@@ -326,12 +295,59 @@
                     }
                 }
             }
+            function filterContactsForGroup(){
+                $("#newGroupContactInput").html("");
+                let groupID = $("#newGroupContactInput").data("groupID");
+                let group = {};
+                //console.log(groupID);
+                for(var i = 0; i < groupMessages.length; i++){
+                    if (groupMessages[i].id == groupID){
+                        group = groupMessages[i];
+                        break;
+                    }
+                }
+
+                filter = $("#newGroupContactInput").val().toUpperCase();
+                $("#newGroupContactList").html("");
+                for(var i = 0; i < listOfContacts.length; i++){
+                    let name = listOfContacts[i].name;
+                    let id = listOfContacts[i].id;
+                    var used = false;
+                    for(var j = 0; j < group.users.length; j ++){
+                        if (group.users[j] == id){
+                            used = true;
+                            break;
+                        }
+                    }
+                    if(used){
+                        continue;
+                    }
+                    else if(name.toUpperCase().indexOf(filter)> -1){
+                        
+                        let html = "<button class = 'contact p-2' data-contactID = '" +id +"' onclick = 'addToGroup(" + groupID + ","+ id+")'>" + name + "</button>"
+                        $("#newGroupContactList").append(html);
+                    }
+                }
+            }
+            function setChatGroupID(id){
+                $("#newGroupContactInput").data("groupID", id);
+            }
+
+            function addToGroup(groupID, contactID){
+                for(var i = 0; i < groupMessages.length; i++){
+                    if(i == groupMessages[i].id){
+                        groupMessages[i].users.push(contactID);
+                        saveContactToGroup(contactID, chatID);
+                    }
+                }
+                alert(groupMessages);
+            }
 
             //creates a new direct chat
             function  createDirectChat(button){
                 let id = button.getAttribute("data-contact-id");
                 let name = button.innerText;
-                let newDirectContact = {id : +id, name: name,numUndreadMessages: 0,messages:[]}
+                let newDirectContact = {id : +id, name: name,messages:[]}
                 directMessages.push(newDirectContact);
                 appendDirectContact(newDirectContact);
                 //not doing an api call here to save the chat becuase it should save when you send a messge and theres no point saving an empty chat
@@ -347,6 +363,7 @@
                 $('#addButton').unbind('click');
                 $("#addButton").click(showGroupDropdown);
                 $("#groupDropdown").hide();
+                $("#newGroupContactList").html("");
             }
 
             function showGroupDropdown(){
@@ -355,12 +372,13 @@
                 $('#addButton').unbind('click');
                 $("#addButton").click(hideGroupDropdown);
                  $("#groupDropdown").show();
+                 $("#newGroupContactList").html("");
             }
 
             function createGroupChat(){
                 let name = $("#groupNameInput").val();
-                let id = saveGroup(group);
-                let group = {id: id, name: name, numUndreadMessages: 0, messages: []}
+                let id =  -1;//saveGroup(group);
+                let group = {id: id, name: name, messages: []}
 
                 groupMessages.push(group);
                 listGroupContacts();
@@ -392,6 +410,7 @@
                             return result
                         }
                     });
+                return -1;
             }
         </script>
         <style>
@@ -484,16 +503,25 @@
                                 </div>
                             </div>
                             <div id = "groupDropdown" class = dropdown>
+                                <h4>Create A New Group</h4>
                                 <input  id = "groupNameInput" type = "text" placeholder = "enter group name">
                                 <button id = "createGroupButton" class = "btn btn-success rounded-0 w-100" onclick = "createGroupChat()">create group</button>
+                                <br>
+                                <div id="" class = "p-2 my-2">
+                                    <h4> Add To This Group </h4>
+                                    <input id = "newGroupContactInput" type = "text" placeholder=  "search for new member" data-groupID = "-1" onkeyup="filterContactsForGroup()">
+                                    <div id = "newGroupContactList"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- chat -->
                 <div id = "messages" class="col-sm-9 d-flex flex-column  pb-2">
-                    <h3  id = "chatTitle" class = " border-top border-white text-center p-3">chat box</h3>
-                    <div id = "chatbox" class = "d-flex flex-column">
+                    <h3  id = "chatTitle" class = " border-top border-white text-center p-3 display-inline">
+                       CHAT BOX
+                    </h3>
+                    <div id = "chatbox" class = "d-flex flex-column p-0">
                         
                     </div>
                     <!-- message input-->
