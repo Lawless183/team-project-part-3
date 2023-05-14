@@ -124,8 +124,8 @@
 
             function saveMessage(message, id, isDirectMessage){
                 if(isDirectMessage){
-                    $.post({url: url + "messages",
-                        data: {senderID: userID, recipientID: id, content: message},
+                    ///messages/:senderID/:recipientID/:groupID/:content'
+                    $.post({url: url + "messages/" + userID + "/" + id + "/" + "null/" + message,
                         success: function(result){
                             console.log("saved direct message");
                         }

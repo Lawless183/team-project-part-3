@@ -55,18 +55,34 @@ router.get('/group/:userID', async (req, res) => {
   res.json(groupChats)
 });
 
-router.post('/messages', async (req, res) => {
-  const {senderID, recipientID, groupID, content} = req.body;
-  const newMessage = await prisma.message.create({
-    data: {
-      senderID: senderID,
-      recipientID: recipientID,
-      groupID: groupID,
-      content: content,
-    },
-  });
+router.post('/messages/:senderID/:recipientID/:groupID/:content', async (req, res) => {
+  const senderID = Number(req.params.senderID);
+  var recipientID = Number(req.params.recipientID);
+  var groupID = Number(req.params.groupID);
+  const content = req.params.content;
+  var newMessage;
+  if(Number.isNaN(groupID) || groupID == undefined){
+    console.log("hello");
+    const newMessage = await prisma.message.create({
+      data: {
+        senderID: senderID,
+        recipientID: recipientID,
+        groupID: null,
+        content: content,
+      },
+    });
+  }
+  else{
+    const newMessage = await prisma.message.create({
+      data: {
+        senderID: senderID,
+        recipientID: null,
+        groupID: groupID,
+        content: content,
+      },
+    });
+  }
   res.json(newMessage);
-  console.log("Message added: ", newMessage);
 });
 
 router.post('/group', async (req, res) => {
