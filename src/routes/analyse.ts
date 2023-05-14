@@ -111,6 +111,8 @@ router.get('/user/:userID/tasks', async (req, res) => {
         return;
     }
 
+    const projectID = Number(req.query.project);
+
     // Reject request if user does not exist
     const user = await prisma.user.findFirst({
         where: {
@@ -124,16 +126,29 @@ router.get('/user/:userID/tasks', async (req, res) => {
         return;
     }
 
-    const tasks = await prisma.task.findMany({
+    const find: {
+        where: Prisma.TaskWhereInput,
+        include: Prisma.TaskInclude
+    } = {
         where: {
             userID
         },
         include: {
             category: true
         }
-    });
+    };
 
-    res.json(tasks);
+    if (!isNaN(projectID)) {
+        find.where.projectID = projectID
+    };
+
+    const tasks = await prisma.task.findMany(find);
+
+    res.json({
+        // @ts-ignore
+        ...countTasks(tasks),
+        tasks
+    });
 
 });
 
@@ -163,6 +178,27 @@ function analyseProject(project: Project & {
     tasks?: (Task & {category: TaskCategory})[] | undefined
 }): AnalyseProject {
 
+    const { taskData, categoryData } = countTasks(project.tasks);
+
+    const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
+
+    return {
+        ...project,
+        taskData,
+        categoryData,
+        daysToDeadline
+    };
+}
+
+function countTasks(tasks: (Task & {category: TaskCategory})[] | undefined) : {
+    taskData: {
+        completed: number,
+        todo: number,
+        ongoing: number
+    },
+    categoryData: any
+} {
+
     const taskData = {
         completed: 0,
         todo: 0,
@@ -171,10 +207,10 @@ function analyseProject(project: Project & {
 
     const categoryData = {};
 
-    if (project.tasks) {
+    if (tasks) {
 
-        for (const i in project.tasks) {
-            const task = project.tasks[i];
+        for (const i in tasks) {
+            const task = tasks[i];
             // @ts-ignore
             taskData[task.status.toLowerCase()]++;
             if (Object.keys(categoryData).includes(task.category.category)) {
@@ -189,14 +225,7 @@ function analyseProject(project: Project & {
 
     }
 
-    const daysToDeadline = dateDiffInDays(new Date(), project.deadline);
-
-    return {
-        ...project,
-        taskData,
-        categoryData,
-        daysToDeadline
-    };
+    return { taskData, categoryData };
 }
 
 export default router;
