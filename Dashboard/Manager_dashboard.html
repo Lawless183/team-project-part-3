@@ -166,8 +166,8 @@
                                 let inProgress = false;
 
                                 for (const j in projects[i].tasks) {
-                                    if (projects[i].tasks[j] != 'COMPLETED') {
-                                        incomplete = true;
+                                    if (projects[i].tasks[j].status != 'COMPLETED') {
+                                        inProgress = true;
                                         break;
                                     }
                                 }
