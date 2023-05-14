@@ -61,6 +61,11 @@
                             
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="row" id="user-container">
+                            
+                        </div>
+                    </div>
                     <div class="col-md-4" id="graph-container">
                         <canvas id="completedGraph" style="width:100%;max-width:700px"></canvas>
                         <canvas id="overdueGraph" style="width:100%;max-width:700px"></canvas>
@@ -147,7 +152,7 @@
                                         modalTaskContainer.innerHTML = '<canvas id="progressChart" style="width:100%;max-width:700px"></canvas>';
                                         modalUserContainer.innerHTML = '<canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>';
 
-                                        const taskResponse = await fetch(`http://localhost:3000/analyse/user/${projects[i].users[j].id}/tasks?project=${projects[j].id}`);
+                                        const taskResponse = await fetch(`http://localhost:3000/analyse/user/${projects[i].users[j].id}/tasks?project=${projects[i].id}`);
                                         const tasks = await taskResponse.json();
 
                                         new Chart("progressChart", {
@@ -192,7 +197,7 @@
 
                                     const userBody = document.createElement("h5");
                                     userBody.classList.add("card-body");
-                                    userBody.innerText = "User Assigned: " + projects[i].users[j].email;
+                                    userBody.innerText = "User: " + projects[i].users[j].email;
                                     
                                     userCard.appendChild(userBody);
                                     userCardWrap.appendChild(userCard);
@@ -278,6 +283,83 @@
                                     }]
                                 }
                             });
+
+                            const usersResponse = await fetch('http://localhost:3000/user');
+                            const users = await usersResponse.json();
+
+                            for (const i in users) {
+                                const userCardWrap = document.createElement('div');
+                                userCardWrap.classList.add("col-md-12");
+
+                                const userCard = document.createElement("div");
+                                userCard.classList.add('card', 'text-black', 'bg-info', 'mb-3');
+                                userCard.addEventListener('click', async () => {
+                                    const modalBody = document.getElementById('modalBody');
+                                    modalTaskContainer.innerHTML = '<canvas id="progressChart" style="width:100%;max-width:700px"></canvas>';
+                                    modalUserContainer.innerHTML = '<canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>';
+
+                                    const taskResponse = await fetch(`http://localhost:3000/analyse/user/${users[i].id}/tasks`);
+                                    const tasks = await taskResponse.json();
+
+                                    new Chart("progressChart", {
+                                        type: "doughnut",
+                                        data: {
+                                            labels: [
+                                                'To Do',
+                                                'Ongoing',
+                                                'Completed'
+                                            ],
+                                            datasets: [{
+                                                label: 'Task Statuses',
+                                                data: [tasks.taskData.todo, tasks.taskData.ongoing, tasks.taskData.completed],
+                                                backgroundColor: [
+                                                    'rgb(255, 99, 132)',
+                                                    'rgb(0, 255, 0)',
+                                                    'rgb(255, 205, 86)'
+                                                ],
+                                                hoverOffset: 4
+                                            }]
+                                        }
+                                    });
+
+                                    new Chart("categoryChart", {
+                                        type: "bar",
+                                        data: {
+                                            labels: Object.keys(tasks.categoryData),
+                                            datasets: [{
+                                                label: 'Task Statuses',
+                                                data: Object.values(tasks.categoryData),
+                                                backgroundColor: [
+                                                    'rgb(255, 99, 132)',
+                                                    'rgb(0, 255, 0)',
+                                                    'rgb(255, 205, 86)'
+                                                ],
+                                                hoverOffset: 4
+                                            }]
+                                        }
+                                    });
+
+                                });
+
+                                const userBody = document.createElement("h5");
+                                userBody.classList.add("card-body");
+                                userBody.innerText = "User: " + users[i].email;
+                                
+                                userCard.appendChild(userBody);
+                                userCardWrap.appendChild(userCard);
+
+                                const footer = document.createElement('button');
+                                footer.classList.add('card-footer');
+                                footer.setAttribute("class", "btn btn-secondary");
+                                footer.setAttribute("data-bs-toggle", "modal");
+                                footer.setAttribute("data-bs-target", "#exampleModalPopovers");
+                                footer.innerHTML = "View User";
+                                userCard.appendChild(footer);
+
+                                const userContainer = document.getElementById("user-container");
+                                userContainer.appendChild(userCardWrap);
+                            }
+
                         })();
 
                         </script>
