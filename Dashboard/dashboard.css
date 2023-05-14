@@ -54,3 +54,7 @@ button{
     padding: 25px 25px 25px 25px;
     margin-right: 1px;
 }
+
+.progress{
+    margin-bottom: 10px;
+}
