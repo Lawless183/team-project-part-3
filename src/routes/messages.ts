@@ -4,34 +4,41 @@ import { group } from 'console';
 
 const router = express.Router();
 
-router.get('/messages', async (req, res) => {
-  const userID = 1;
-  // const {userID, groupID} = req.body;
+//get direct messages or messages from a group
+router.get('/messages/:userID/:groupID', async (req, res) => {
+  const userID= Number(req.params.userID);
+  var groupID = Number(req.params.groupID);
+
+  if(groupID == undefined){
+    groupID = -1;
+  }
+
+
   const messages = await prisma.message.findMany({
     where: {
       OR: [
         { senderID: userID },
         { recipientID: userID }, 
-        // { groupID: groupID },
+        { groupID: groupID },
       ]
     }
   });
 
   const contacts = await prisma.user.findMany({
     select: {
+      id: true,
       name: true
     }
   });
 
   const messagesContent = messages.map((message) => message.content)
-  const contactsNames = contacts.map((contact) => contact.name)
+  const contactsMap = contacts.map((contact) => [contact.name, contact.id])
 
-  res.json([messagesContent, contactsNames]);
+  res.json([messagesContent, contactsMap]);
 });
-
-router.get('/group', async (req, res) => {
-  // const userID = req.body;
-  const userID = 1;
+//load groups
+router.get('/group/:userID', async (req, res) => {
+  const userID = Number(req.params.userID);
   const groupChats = await prisma.group.findMany({
     where: {
       users: {
@@ -40,6 +47,10 @@ router.get('/group', async (req, res) => {
         },
       },
     },
+    include: {
+      Message :true,
+      users: true
+    }
   });
   res.json(groupChats)
 });
@@ -50,7 +61,7 @@ router.post('/messages', async (req, res) => {
     data: {
       senderID: senderID,
       recipientID: recipientID,
-      // groupID: groupID;
+      groupID: groupID,
       content: content,
     },
   });

@@ -4,20 +4,19 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script>
-            let directMessages = [{id: 01, name: "Sherlock Holmes", messages:[{isMyMessage: true,content: "hi"}, {isMyMessage: false,content: "Good Evening" }]},
-                            {id: 02,name: "John Watson", messages:[{isMyMessage:true, content:"I need help"}]}];
+            let directMessages = [];
             
-            let groupMessages = [{id: 01, name: "221B Baker Street BOIIIS",users: [01, 02, 03], messages:[{sender: "Sherlock Homes", content:"John can you spot me rent"}, {sender: "John Watson", content: "FINE THAT 3 MONTHS YOU OWE ME"}]},
-                                    {id: 02, name: "Holmes Homeeeesss", users:[06, 01, 03], messages:[{sender: "Mycroft Holmes", content:"Don't forget to wish mother a happy birthday"}, {sender: "Sherlock Holmes", content: "happy birthday, mother"}]}];
+            let groupMessages = []
             
-            let listOfContacts = [{id: 01, name: "Sherlock Holmes"},{id: 02,name: "John Watson"}, {id: 04, name: "Mrs Hudson"}, {id: 05, name: "Ireen Addler"}, {id:06, name: "Mycroft Holmes"}]
-            let userID = 03;
+            let listOfContacts = [];
             let username = "Jim Moriarty";
+            let url = "http://localhost:3000/";
+            let userID = 3;
 
             $(document).ready(function(){
                 loadGroups();
                 loadContacts();
-                loadMessages()
+                //loadMessages()
                 listDirectContacts();
                 $(document).on('keypress',function(e) {
                     if(e.which == 13) {
@@ -32,31 +31,36 @@
 
             //load data
             function loadGroups(){
-                //TODO API call get [{id, name, messages: [{sender, content}]}] with groups that given user id in
-                $.post({url: "/messages",
+                $.get({url: url +"group/" + userID,
                         data: userID,
                         success: function(result){
                             console.log("loaded groups");
-                            //groupMessages = JSON.Parse(result)
+                            //console.log(result);
+                            groupMessages = result;
                         }
                 });
             }
 
             //load all contacts
             function loadContacts(){
-                //TODO API CALL get [{id, name}] of all contacts
-                $.get({url: "/messages",
+                ///messages/:userID/:groupID
+                $.get({url: url + "messages/"+ userID +"/-1",
                         success: function(result){
                             console.log("loaded contacts");
-                            //listOfContacts = JSON.parse(result);
+                            console.log(result);
+                            for(var i = 0; i < result[1].length; i++){
+                                listOfContacts.push({id: result[1][i][1],name: result[1][i][0]});
+                            }
+                            console.log(listOfContacts);
                         }
                 });
             }
+            
 
-            //load messages
+            /*load messages
             function loadMessages(){
                 //TODO API CALL get [{id, name, messages: [{isMyMessage, content}]}]; 
-                $.post({url: "/messages",
+                $.post({url: url,
                         data: userID,
                         success: function(result){
                             console.log("loaded messages");
@@ -64,6 +68,7 @@
                         }
                 });
             }
+            */
 
             //send entered message to the recipant
             function sendMessage(message, chatID, isDirectMessage){
@@ -99,20 +104,20 @@
 
             function saveMessage(message, id, isDirectMessage){
                 if(isDirectMessage){
-                    $.post({url: "/messages",
-                        data: {senderID: userID, recipientID: id, message: message},
+                    $.post({url: url + "messages",
+                        data: {senderID: userID, recipientID: id, content: message},
                         success: function(result){
                             console.log("saved direct message");
                         }
                     });
                 }
                 else{
-                    $.post({url: "/messages",
+                    /*$.post({url: url + "",
                         data: {senderID: userID, chatID: id, message: message},
                         success: function(result){
                             console.log("saved group message");
                         }
-                    });
+                    });*/
                 }
             }
 
@@ -168,7 +173,7 @@
             //CHATBOX FUNCTIONS
             //add a message to the chat box
             function showDirectMessage(message, isMyMessage){
-                let html = ""
+                let html = "";
                 if(isMyMessage){
                     html += "<div class = 'd-flex justify-content-end m-1'>\
                     <span class = 'myMessage rounded-pill p-3'>" + message +"</span>"
@@ -218,7 +223,7 @@
                 //find the groupChats
                 for( let i =0; i < groupMessages.length; i++){
                     if(id  == groupMessages[i].id){
-                        listMessages(groupMessages[i].messages, false);
+                        listMessages(groupMessages[i].Message, false);
                         //clear notifications and reload the chat
                         clearContacts();
                         listGroupContacts();
@@ -392,8 +397,8 @@
             function saveContactToGroup(id, chatID){
                 //TODO API CALL
                 //post group chat id and user id
-                $.post({url: "/messages",
-                        data: {newUserID: id, chatID: chatID},
+                $.post({url: url + "group/users",
+                        data: {userID: id, groupID: chatID},
                         success: function(result){
                             console.log("saved contact to group");
                         }
@@ -403,8 +408,9 @@
 
             function saveGroup(groupName, id){
                 //TODO API CALL
-                $.post({url: "/messages",
-                        data: {groupName: groupName, userID: id},
+                console.log(groupName);
+                $.post({url: url = "group",
+                        data: {name: groupName, userID: id},
                         success: function(result){
                             console.log("saved group");
                             return result
