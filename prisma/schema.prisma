@@ -60,7 +60,7 @@ model Task {
   deadline    DateTime
   categoryID  Int
   category    TaskCategory @relation(fields: [categoryID], references: [id])
-  userID      Int          @default(0)
+  userID      Int
   user        User         @relation(fields: [userID], references: [id])
 }
 

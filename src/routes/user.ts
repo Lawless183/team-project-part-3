@@ -4,13 +4,7 @@ import prisma from '../prisma';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-    const users = await prisma.user.findMany({
-        include: {
-            recievedMessages: true,
-            sentMessages: true,
-            groups: true
-        }
-    });
+    const users = await prisma.user.findMany();
     res.json(users);
 });
 

@@ -1,0 +1,60 @@
+#page-title{
+    color: white;
+    text-align: center;
+    background-color: rgb(62, 0, 103);
+    padding: 5px 5px 5px 5px;
+}
+#user-welcome{
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+    background-color: rgb(62, 0, 103);
+    padding: 5px 5px 5px 5px;
+}
+#cardrow{
+    height: 75vh;
+    width: 100vw;
+}
+
+#progressSuccess{
+    margin-bottom: 5px;
+}
+
+.card{
+    margin-bottom: 20px;
+
+}
+
+button{
+    height: fit-content;
+    width: fit-content;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}
+.button{
+    background-color: rgb(62, 0, 103);
+}
+
+
+#graph-container{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+}
+
+#jumbotron{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+    padding: 15px 15px 15px 15px;
+    margin-bottom: 15px;
+}
+
+#card-container{
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 25px;
+    padding: 25px 25px 25px 25px;
+    margin-right: 1px;
+}
+
+.progress{
+    margin-bottom: 10px;
+}
