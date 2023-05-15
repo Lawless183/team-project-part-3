@@ -369,6 +369,7 @@
                         groupMessages[i].users.push(contactID);
                         saveContactToGroup(contactID, groupID);
                         filterContactsForGroup();
+                        
                     }
                 }
             }
@@ -422,9 +423,6 @@
                 let id = saveGroup(name, userID);
             }
 
-            function addContactToGroup(){
-                //TODO
-            }
 
             function saveContactToGroup(id, chatID){
                 $.post({url: url + "group/users/" + id + "/" + chatID,
