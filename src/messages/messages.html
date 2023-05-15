@@ -405,14 +405,21 @@
                  $("#newGroupContactList").html("");
             }
 
+            function saveGroup(groupName, id){
+                let newID = -1
+                $.post({url: url + "group/" + id + "/" + groupName,
+                        success: function(result){
+                            console.log("saved group: " + result);
+                            let group = {id: result, name: groupName, Message: []}
+                            groupMessages.push(group);
+                            listGroupContacts();
+                        }
+                    });
+            }
+
             function createGroupChat(){
                 let name = $("#groupNameInput").val();
-                let id =  -1;//saveGroup(group);
-                let group = {id: id, name: name, messages: []}
-
-                groupMessages.push(group);
-                listGroupContacts();
-
+                let id = saveGroup(name, userID);
             }
 
             function addContactToGroup(){
@@ -420,29 +427,13 @@
             }
 
             function saveContactToGroup(id, chatID){
-                //TODO API CALL
-                //post group chat id and user id
-                $.post({url: url + "group/users",
-                        data: {userID: id, groupID: chatID},
+                $.post({url: url + "group/users/" + id + "/" + chatID,
                         success: function(result){
                             console.log("saved contact to group");
                         }
                     });
             }
 
-
-            function saveGroup(groupName, id){
-                //TODO API CALL
-                console.log(groupName);
-                $.post({url: url = "group",
-                        data: {name: groupName, userID: id},
-                        success: function(result){
-                            console.log("saved group");
-                            return result
-                        }
-                    });
-                return -1;
-            }
         </script>
         <style>
             .container-fluid{

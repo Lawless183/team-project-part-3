@@ -62,7 +62,6 @@ router.post('/messages/:senderID/:recipientID/:groupID/:content', async (req, re
   const content = req.params.content;
   var newMessage;
   if(Number.isNaN(groupID) || groupID == undefined){
-    console.log("hello");
     const newMessage = await prisma.message.create({
       data: {
         senderID: senderID,
@@ -84,20 +83,26 @@ router.post('/messages/:senderID/:recipientID/:groupID/:content', async (req, re
   }
   res.json(newMessage);
 });
-
-router.post('/group', async (req, res) => {
-  const {name, userID} = req.body;
+//create a new group
+router.post('/group/:userID/:name', async (req, res) => {
+  const name = req.params.name;
+  const userID = Number(req.params.userID)
   const newGroup = await prisma.group.create({
     data: {
       name: name,
-      users: userID,
+      users: {
+        connect: {
+          id:userID
+        }
+      }
     },
   });
   res.json(newGroup.id);
 });
-
-router.post('/group/users', async (req, res) => {
-  const {groupID, user} = req.body;
+//add a user to a group
+router.post('/group/users/:user/:groupID', async (req, res) => {
+  const groupID = req.params.groupID;
+  const user = Number(req.params.user);
   const updateUsers = await prisma.group.update({
     where:{
       id: Number(groupID),

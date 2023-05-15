@@ -2,7 +2,7 @@ import express from 'express';
 import prisma from './prisma';
 import userRoutes from './routes/user';
 import messagesRoutes from './routes/messages';
-import analyseRoutes from './routes/analyse';
+//import analyseRoutes from './routes/analyse';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -16,7 +16,7 @@ app.use(cors());
 
 app.use('/user', userRoutes);
 app.use('/', messagesRoutes);
-app.use('/analyse', analyseRoutes);
+//app.use('/analyse', analyseRoutes);
 
 async function main() {
     app.listen(port, () => console.log(`Server running on port ${port}`));
