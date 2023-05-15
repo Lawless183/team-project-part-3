@@ -365,12 +365,12 @@
 
             function addToGroup(groupID, contactID){
                 for(var i = 0; i < groupMessages.length; i++){
-                    if(i == groupMessages[i].id){
+                    if(groupID == groupMessages[i].id){
                         groupMessages[i].users.push(contactID);
-                        saveContactToGroup(contactID, chatID);
+                        saveContactToGroup(contactID, groupID);
+                        filterContactsForGroup();
                     }
                 }
-                alert(groupMessages);
             }
 
             //creates a new direct chat
@@ -388,7 +388,7 @@
 
             //GROUP ADD
             function hideGroupDropdown(){
-                $("#addButton").html("new group")             
+                $("#addButton").html("tools")             
                 $('#addButton').attr('onclick', '');
                 $('#addButton').unbind('click');
                 $("#addButton").click(showGroupDropdown);
@@ -410,7 +410,7 @@
                 $.post({url: url + "group/" + id + "/" + groupName,
                         success: function(result){
                             console.log("saved group: " + result);
-                            let group = {id: result, name: groupName, Message: []}
+                            let group = {id: result, name: groupName,users:[userID], Message: []}
                             groupMessages.push(group);
                             listGroupContacts();
                         }
