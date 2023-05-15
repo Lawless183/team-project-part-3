@@ -86,7 +86,7 @@
                         showDirectMessage(message, true);
                     }
                     else{
-                        showGroupMessage(message, username);
+                        showGroupMessage(message, userID);
                     }
                     addMessage(message,chatID, isDirectMessage, true);
                     saveMessage(message, chatID, isDirectMessage);
@@ -116,7 +116,7 @@
                 else{
                     for(let i =0; i < groupMessages.length; i++ ){
                         if (groupMessages[i].id == chatID){
-                            groupMessages[i].messages.push({sender: username, content: message})
+                            groupMessages[i].Message.push({sender: username, content: message})
                         }
                     }
                 }
@@ -132,12 +132,11 @@
                     });
                 }
                 else{
-                    /*$.post({url: url + "",
-                        data: {senderID: userID, chatID: id, message: message},
+                    $.post({url: url + "messages/" + userID + "/null/" + id + "/" + message,
                         success: function(result){
                             console.log("saved group message");
                         }
-                    });*/
+                    });
                 }
             }
 
